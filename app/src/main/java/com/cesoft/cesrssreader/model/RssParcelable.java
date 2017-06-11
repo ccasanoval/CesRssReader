@@ -3,6 +3,8 @@ package com.cesoft.cesrssreader.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.Date;
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Created by sandra on 11/06/2017.
 public class RssParcelable implements Parcelable
@@ -12,9 +14,9 @@ public class RssParcelable implements Parcelable
 	public RssParcelable(RssModel data){_data=data;}
 	public RssModel getRssModel(){return _data;}
 
-	RssParcelable(Parcel in)
+	private RssParcelable(Parcel in)
 	{
-		_data = new RssModel(in.readString(), in.readString(), in.readString(), in.readString());
+		_data = new RssModel(in.readString(), in.readString(), in.readString(), in.readString(), new Date(in.readLong()));
 		/*_data.setTitulo(in.readString());
 		_data.setDescripcion(in.readString());
 		_data.setLink(in.readString());
@@ -27,6 +29,7 @@ public class RssParcelable implements Parcelable
 		dest.writeString(_data.getDescripcion());
 		dest.writeString(_data.getLink());
 		dest.writeString(_data.getImg());
+		dest.writeLong(_data.getFecha().getTime());
 	}
 	
 	@Override

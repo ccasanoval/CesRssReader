@@ -41,6 +41,25 @@ public class ActMain extends AppCompatActivity implements FetchRss.Callback
 		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
 
+		/*TODO: move to unit test
+		Log.e(TAG, "ooooooooooooooooo"+ RssParser.str2date("Wed, 07 Jun 2017 16:00 EDT"));
+		 
+		ArrayList<RssModel> items = new ArrayList<RssModel>();
+		items.add(new RssModel("1", "1", "1", "1", new Date()));		try{Thread.sleep(100);}catch(Exception e){}
+		items.add(new RssModel("2", "2", "2", "2", new Date()));		try{Thread.sleep(100);}catch(Exception e){}
+		items.add(new RssModel("3", "3", "3", "3", new Date()));		try{Thread.sleep(100);}catch(Exception e){}
+		Collections.sort(items, new Comparator<RssModel>()
+			{
+				public int compare(RssModel o1, RssModel o2)
+				{
+					if(o1.getFecha() == null || o2.getFecha() == null) return 0;
+					return o2.getFecha().compareTo(o1.getFecha());
+				}
+			});
+		for(RssModel o : items)
+		{
+			Log.e(TAG, "ITEM : "+o.getTitulo());
+		}*/
 		//---
 
 		_lista = (RecyclerView)findViewById(R.id.rss_list);

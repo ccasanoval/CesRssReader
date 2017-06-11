@@ -12,6 +12,7 @@ import java.util.List;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Created by Cesar Casanova on 11/06/2017.
+//TODO: RxJava
 public class FetchRss extends AsyncTask<String, Void, Boolean>
 {
 	private static final String TAG = FetchRss.class.getSimpleName();

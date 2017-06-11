@@ -1,5 +1,6 @@
 package com.cesoft.cesrssreader.model;
 
+import android.util.Log;
 import android.util.Xml;
 
 import org.jsoup.Jsoup;
@@ -10,19 +11,33 @@ import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Created by Cesar Casanova on 11/06/2017.
 public class RssParser
 {
-	//private static final String TAG = RssParser.class.getSimpleName();
+	private static final String TAG = RssParser.class.getSimpleName();
 	
-	//----------------------------------------------------------------------------------------------
-	// De una cadena HTML devuelve el primer texto
-	public static String parseHTML(String html)
+	public static Date str2date(String str)
 	{
-		return null;
+		if(str == null)return null;
+		try
+		{
+			//SimpleDateFormat format = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm zzz");//Wed, 07 Jun 2017 16:00 EDT
+			SimpleDateFormat format = new SimpleDateFormat("dd MMM yyyy HH:mm");
+			return format.parse(str.substring(5, 22));
+		}
+		catch(ParseException e)
+		{
+			Log.e(TAG, "str2date:e: "+str, e);
+			return null;
+		}
 	}
 	
 	//----------------------------------------------------------------------------------------------
@@ -33,6 +48,7 @@ public class RssParser
 		String description = null;
 		String link = null;
 		String img = null;
+		Date fecha = null;
 		boolean isItem = false;
 		ArrayList<RssModel> items = new ArrayList<>();
 		
@@ -42,7 +58,6 @@ public class RssParser
 			xmlPullParser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
 			xmlPullParser.setInput(inputStream, null);
 			
-			//xmlPullParser.nextTag();
 			while(xmlPullParser.next() != XmlPullParser.END_DOCUMENT)
 			{
 				String name = xmlPullParser.getName();
@@ -59,7 +74,7 @@ public class RssParser
 				{
 					//if(name.equalsIgnoreCase("item")) isItem = false;
 					//Log.e(TAG, "NEW ITEM------------------------"+title+" -"+img+"- "+link);
-					RssModel item = new RssModel(title, description, link, img);
+					RssModel item = new RssModel(title, description, link, img, fecha);
 					items.add(item);
 					
 					title = null;
@@ -81,6 +96,7 @@ public class RssParser
 				if(name.equalsIgnoreCase("title"))	title = result;
 				else if(name.equalsIgnoreCase("link")) link = result;
 				else if(name.equalsIgnoreCase("description")) description = result;
+				else if(name.equalsIgnoreCase("pubdate")) fecha = str2date(result);//Wed, 07 Jun 2017 16:00 EDT
 				
 				if(img == null)
 				{
@@ -102,10 +118,18 @@ public class RssParser
 						}
 					}
 				}
-				
-				//Log.e(TAG, "---------------------------------------val ==> " + title + " : "+link+" : : "+img);
 		    }
-		
+		    
+		    /// Ordenar los elementos por fecha
+			Collections.sort(items, new Comparator<RssModel>()
+			{
+				public int compare(RssModel o1, RssModel o2)
+				{
+					if(o1.getFecha() == null || o2.getFecha() == null) return 0;
+					return o2.getFecha().compareTo(o1.getFecha());
+				}
+			});
+			
 		    return items;
 		}
 		finally

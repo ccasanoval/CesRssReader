@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.webkit.WebView;
 import android.widget.Button;
@@ -21,18 +22,21 @@ public class ActDetail extends AppCompatActivity
 {
 	private static final String TAG = ActDetail.class.getSimpleName();
 	
+	//----------------------------------------------------------------------------------------------
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.act_detail);
 		
+		// Back arrow on action bar
+		if(getSupportActionBar() != null)getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		
 		TextView txtTitulo = ((TextView)findViewById(R.id.txtTitulo));
 	    //TextView txtDescripcion = ((TextView)findViewById(R.id.txtDescripcion));
 		Button btnLink = (Button)findViewById(R.id.btnLink);
 		ImageView img = (ImageView)findViewById(R.id.img);
 		WebView wvDescripcion = (WebView)findViewById(R.id.wvDescripcion);
-		// Cargo imagen desde URL con Glide
 		
 		try
 		{
@@ -69,4 +73,18 @@ public class ActDetail extends AppCompatActivity
 			Log.e(TAG, "onCreate:e:--------------------------------- sin datos del feed ", e);
 		}
 	}
+	
+	//----------------------------------------------------------------------------------------------
+	@Override
+    public boolean onOptionsItemSelected(MenuItem item)
+	{
+        switch(item.getItemId())
+        {
+        case android.R.id.home:
+            finish();
+            return true;
+        default:
+            return super.onOptionsItemSelected(item);
+        }
+    }
 }
