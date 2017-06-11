@@ -11,22 +11,30 @@ import org.xmlpull.v1.XmlPullParserException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.List;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Created by Cesar Casanova on 11/06/2017.
 public class RssParser
 {
-	private static final String TAG = RssParser.class.getSimpleName();
+	//private static final String TAG = RssParser.class.getSimpleName();
 	
-	public static List<RssModel> parseFeed(InputStream inputStream) throws XmlPullParserException, IOException
+	//----------------------------------------------------------------------------------------------
+	// De una cadena HTML devuelve el primer texto
+	public static String parseHTML(String html)
+	{
+		return null;
+	}
+	
+	//----------------------------------------------------------------------------------------------
+	// Parsea el inputStream desde la red o archivo a una lista de RssFeeds
+	public static ArrayList<RssModel> parseFeed(InputStream inputStream) throws XmlPullParserException, IOException
 	{
 		String title = null;
 		String description = null;
 		String link = null;
 		String img = null;
 		boolean isItem = false;
-		List<RssModel> items = new ArrayList<>();
+		ArrayList<RssModel> items = new ArrayList<>();
 		
 		try
 		{

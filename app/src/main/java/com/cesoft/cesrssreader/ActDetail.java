@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -27,9 +28,10 @@ public class ActDetail extends AppCompatActivity
 		setContentView(R.layout.act_detail);
 		
 		TextView txtTitulo = ((TextView)findViewById(R.id.txtTitulo));
-	    TextView txtDescripcion = ((TextView)findViewById(R.id.txtDescripcion));
+	    //TextView txtDescripcion = ((TextView)findViewById(R.id.txtDescripcion));
 		Button btnLink = (Button)findViewById(R.id.btnLink);
 		ImageView img = (ImageView)findViewById(R.id.img);
+		WebView wvDescripcion = (WebView)findViewById(R.id.wvDescripcion);
 		// Cargo imagen desde URL con Glide
 		
 		try
@@ -42,7 +44,9 @@ public class ActDetail extends AppCompatActivity
 				return;
 			}
 			txtTitulo.setText(data.getRssModel().getTitulo());
-			txtDescripcion.setText(data.getRssModel().getDescripcion());
+			//txtDescripcion.setText(data.getRssModel().getDescripcion());
+			wvDescripcion.loadData(data.getRssModel().getDescripcion(), "text/html; charset=utf-8", "utf-8");
+	
 			if(data.getRssModel().getImg() != null)
 			{
 				Glide.with(this)

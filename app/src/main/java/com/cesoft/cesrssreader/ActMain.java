@@ -3,7 +3,6 @@ package com.cesoft.cesrssreader;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -11,29 +10,27 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.cesoft.cesrssreader.model.RssModel;
-import com.cesoft.cesrssreader.model.RssParser;
+import com.cesoft.cesrssreader.net.FetchRss;
 
-import java.io.InputStream;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Created by Cesar Casanova on 10/06/2017.
-public class ActMain extends AppCompatActivity
+public class ActMain extends AppCompatActivity implements FetchRss.Callback
 {
 	private static final String TAG = "ActMAin";
+	private static final String _url = "http://www.xatakandroid.com/tag/feeds/rss2.xml";
+	//private static final String _url = "https://www.nasa.gov/rss/dyn/breaking_news.rss";
 
 	private RecyclerView _lista;
 	private SwipeRefreshLayout _SwipeLayout;
-	private List<RssModel> _FeedList = new ArrayList<>();
 
 	//----------------------------------------------------------------------------------------------
 	@Override
@@ -48,7 +45,7 @@ public class ActMain extends AppCompatActivity
 
 		_lista = (RecyclerView)findViewById(R.id.rss_list);
 		_lista.setLayoutManager(new LinearLayoutManager(this));
-		_lista.setAdapter(new RssListAdapter(this, _FeedList));
+		_lista.setAdapter(new RssListAdapter(this, new ArrayList<RssModel>()));
 
 		_SwipeLayout = (SwipeRefreshLayout)findViewById(R.id.swipeRefreshLayout);
 		_SwipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener()
@@ -56,12 +53,13 @@ public class ActMain extends AppCompatActivity
 			@Override
 			public void onRefresh()
 			{
-				new FetchRssTask().execute((Void)null);
+				new FetchRss(ActMain.this).execute(_url);
 			}
 		});
-		new FetchRssTask().execute((Void)null);
+		new FetchRss(ActMain.this).execute(_url);
 		handleIntent(getIntent());
 	}
+	//----------------------------------------------------------------------------------------------
 	@Override
 	public void onNewIntent(Intent i)
 	{
@@ -77,7 +75,7 @@ public class ActMain extends AppCompatActivity
 		}
 	}
 
-
+	//----------------------------------------------------------------------------------------------
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu)
 	{
@@ -94,12 +92,12 @@ public class ActMain extends AppCompatActivity
 		return true;
 	}
 //https://coderwall.com/p/zpwrsg/add-search-function-to-list-view-in-android TODO
+	//----------------------------------------------------------------------------------------------
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item)
 	{
-		// Handle action bar item clicks here. The action bar will
-		// automatically handle clicks on the Home/Up button, so long
-		// as you specify a parent activity in AndroidManifest.xml.
+		// Handle action bar item clicks here. The action bar will automatically handle clicks
+		// on the Home/Up button, so long as you specify a parent activity in AndroidManifest.xml.
 		int id = item.getItemId();
 
 		//noinspection SimplifiableIfStatement
@@ -110,63 +108,28 @@ public class ActMain extends AppCompatActivity
 
 		return super.onOptionsItemSelected(item);
 	}
-
-
-
-	//----------------------------------------------------------------------------------------------
 	
-    
-
-	////////////////////////////////////////////////////////////////////////////////////////////////
-	private class FetchRssTask extends AsyncTask<Void, Void, Boolean>
+	///////////////// FetchRss.Callback
+	//
+	//----------------------------------------------------------------------------------------------
+	@Override
+	public void onPreExecute()
 	{
-		private String urlLink = "http://www.xatakandroid.com/tag/feeds/rss2.xml";
-		//private String urlLink = "https://www.nasa.gov/rss/dyn/breaking_news.rss";
-
-		@Override
-		protected void onPreExecute()
+		_SwipeLayout.setRefreshing(true);
+	}
+	//----------------------------------------------------------------------------------------------
+	@Override
+	public void onPostExecute(Boolean success, List<RssModel> lista)
+	{
+		_SwipeLayout.setRefreshing(false);
+		if(success)
 		{
-			_SwipeLayout.setRefreshing(true);
+			_lista.setAdapter(new RssListAdapter(this, lista));
 		}
-
-		@Override
-		protected Boolean doInBackground(Void... voids)
+		else
 		{
-			if(TextUtils.isEmpty(urlLink))return false;
-
-			try
-			{
-				if( !urlLink.startsWith("http://") && !urlLink.startsWith("https://"))
-					urlLink = "http://" + urlLink;
-
-				URL url = new URL(urlLink);
-				InputStream inputStream = url.openConnection().getInputStream();
-				_FeedList = RssParser.parseFeed(inputStream);
-				return true;
-			}
-			catch(Exception e)
-			{
-				Log.e(TAG, "Error IO: ", e);
-			}
-			return false;
-		}
-
-		@Override
-		protected void onPostExecute(Boolean success)
-		{
-			_SwipeLayout.setRefreshing(false);
-			if(success)
-			{
-				/*mFeedTitleTextView.setText("Feed Title: " + mFeedTitle);
-				mFeedDescriptionTextView.setText("Feed Description: " + mFeedDescription);
-				mFeedLinkTextView.setText("Feed Link: " + mFeedLink);
-				// Fill RecyclerView*/
-				_lista.setAdapter(new RssListAdapter(ActMain.this, _FeedList));
-			}
-			else
-			{
-				Toast.makeText(ActMain.this, "Enter a valid Rss feed url", Toast.LENGTH_LONG).show();
-			}
+			Toast.makeText(this, "Enter a valid Rss feed url", Toast.LENGTH_LONG).show();
 		}
 	}
+	
 }
