@@ -13,6 +13,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.cesoft.cesrssreader.model.RssModel;
+import com.cesoft.cesrssreader.model.RssParcelable;
 
 import java.util.List;
 
@@ -47,33 +49,51 @@ public class RssListAdapter extends RecyclerView.Adapter<RssListAdapter.RssModel
 	    return new RssModelViewHolder(v);
 	}
 
+	
 	@Override
 	public void onBindViewHolder(RssModelViewHolder holder, int position)
 	{
 	    final RssModel rssModel = _RssModels.get(position);
 
+		//-------------------
+		// Iniciamos campos del elemento Rss
 	    ((TextView)holder.rssFeedView.findViewById(R.id.txtTitulo)).setText(rssModel.getTitulo());
 	    ((TextView)holder.rssFeedView.findViewById(R.id.txtDescripcion)).setText(rssModel.getDescripcion());
-
-		((Button)holder.rssFeedView.findViewById(R.id.btnLink)).setTag(rssModel.getLink());
-		((Button)holder.rssFeedView.findViewById(R.id.btnLink)).setOnClickListener(
-			new View.OnClickListener()
-			{
-				@Override
-				public void onClick(View view)
-				{
-					Log.e("TAG : ", "-------------------TAG---------"+view.getTag());
-					Intent intent= new Intent(Intent.ACTION_VIEW, Uri.parse(view.getTag().toString()));
-					_context.startActivity(intent);
-				}
-			});
-
+		// Cargo imagen desde URL con Glide
 		if(rssModel.getImg() != null)
 		{
 			Glide.with(_context)
 	            .load(rssModel.getImg())
 	            .into(((ImageView)holder.rssFeedView.findViewById(R.id.img)));
 		}
+		
+		//-------------------
+		// Boton que abre el navegador con la URL del Rss
+		holder.rssFeedView.findViewById(R.id.btnLink).setOnClickListener(
+			new View.OnClickListener()
+			{
+				@Override
+				public void onClick(View view)
+				{
+					Intent intent= new Intent(Intent.ACTION_VIEW, Uri.parse(rssModel.getLink()));
+					_context.startActivity(intent);
+				}
+			});
+		//-------------------
+		// Mostrar en Detalle
+		View.OnClickListener onClick = new View.OnClickListener()
+		{
+			@Override
+			public void onClick(View view)
+			{
+				Intent intent= new Intent(_context, ActDetail.class);
+				intent.putExtra(RssModel.class.getSimpleName(), new RssParcelable(rssModel));
+				_context.startActivity(intent);
+			}
+		};
+		holder.rssFeedView.findViewById(R.id.img).setOnClickListener(onClick);
+		holder.rssFeedView.findViewById(R.id.txtTitulo).setOnClickListener(onClick);
+	    holder.rssFeedView.findViewById(R.id.txtDescripcion).setOnClickListener(onClick);
 	}
 
 	//----------------------------------------------------------------------------------------------

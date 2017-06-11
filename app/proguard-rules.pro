@@ -33,4 +33,7 @@
   public *;
 }
 # for DexGuard only
--keepresourcexmlelements manifest/application/meta-data@value=GlideModule
+#-keepresourcexmlelements manifest/application/meta-data@value=GlideModule
+
+# SEARCH
+-keep class android.support.v7.widget.SearchView { *; }

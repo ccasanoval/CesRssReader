@@ -1,17 +1,18 @@
-package com.cesoft.cesrssreader;
+package com.cesoft.cesrssreader.model;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Created by Cesar Casanova on 10/06/2017.
 public class RssModel
 {
+	//public static final String TAG = RssModel.class.getSimpleName();
 	private String titulo;
 	private String descripcion;
 	private String link;
 	private String img;
 
-	public RssModel(String title, String descripcion, String link, String img)
+	public RssModel(String titulo, String descripcion, String link, String img)
 	{
-	    this.titulo = title;
+	    this.titulo = titulo;
 		this.descripcion = descripcion;
 	    this.link = link;
 	    this.img = img;

@@ -1,27 +1,25 @@
 package com.cesoft.cesrssreader;
 
+import android.app.SearchManager;
+import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
-import android.util.Xml;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserException;
+import com.cesoft.cesrssreader.model.RssModel;
+import com.cesoft.cesrssreader.model.RssParser;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
@@ -62,16 +60,40 @@ public class ActMain extends AppCompatActivity
 			}
 		});
 		new FetchRssTask().execute((Void)null);
+		handleIntent(getIntent());
 	}
+	@Override
+	public void onNewIntent(Intent i)
+	{
+		handleIntent(getIntent());
+	}
+	private void handleIntent(Intent intent)
+	{
+		if(Intent.ACTION_SEARCH.equals(intent.getAction()))
+		{
+			String query = intent.getStringExtra(SearchManager.QUERY);
+			Log.e(TAG, "---------------BUSCAR-----------"+query);
+			//use the query to search your data somehow
+		}
+	}
+
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu)
 	{
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.menu_main, menu);
+		
+		// Associate searchable configuration with the SearchView
+		SearchManager searchManager = (SearchManager)getSystemService(Context.SEARCH_SERVICE);
+		SearchView searchView = (SearchView)menu.findItem(R.id.buscar).getActionView();
+		searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+    searchView.setSubmitButtonEnabled(true);
+    //searchView.setOnQueryTextListener(this);
+
 		return true;
 	}
-
+//https://coderwall.com/p/zpwrsg/add-search-function-to-list-view-in-android TODO
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item)
 	{
@@ -81,7 +103,7 @@ public class ActMain extends AppCompatActivity
 		int id = item.getItemId();
 
 		//noinspection SimplifiableIfStatement
-		if (id == R.id.action_settings)
+		if(id == R.id.configuracion)
 		{
 			return true;
 		}
@@ -92,196 +114,14 @@ public class ActMain extends AppCompatActivity
 
 
 	//----------------------------------------------------------------------------------------------
-	/*public List<RssModel> parseFeed(InputStream inputStream) throws XmlPullParserException, IOException
-	{
-		String title = null;
-		String link = null;
-		String description = null;
-		String img = null;
-		boolean isItem = false;
-		List<RssModel> items = new ArrayList<>();
-
-		try
-		{
-			XmlPullParser xmlPullParser = Xml.newPullParser();
-			xmlPullParser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
-			xmlPullParser.setInput(inputStream, null);
-
-			xmlPullParser.nextTag();
-			while(xmlPullParser.next() != XmlPullParser.END_DOCUMENT)
-			{
-Log.e(TAG, "------------ LOOP ---------------");
-				String name = xmlPullParser.getName();
-				if(name == null)continue;
-				
-				int eventType = xmlPullParser.getEventType();
-				if(eventType == XmlPullParser.END_TAG && name.equalsIgnoreCase("item"))
-				{
-	Log.e(TAG, "************************ "+title+" ------ "+link+" --- "+img+"****************");
-					RssModel item = new RssModel(title, description, link, img);
-					items.add(item);
-					
-					title = null;
-					description = null;
-					link = null;
-					img = null;
-					isItem = false;
-				}
-				
-				
-	Log.e(TAG, "-----------------------------Parsing name ==> " + name);
-				
-				String result = "";
-                if (xmlPullParser.next() == XmlPullParser.TEXT) {
-                    result = xmlPullParser.getText();
-                    xmlPullParser.nextTag();
-                }
-
-                if (name.equalsIgnoreCase("title")) {
-                    title = result;
-                } else if (name.equalsIgnoreCase("link")) {
-                    link = result;
-                } else if (name.equalsIgnoreCase("description")) {
-                    description = result;
-                }
 	
-				String result = "";
-				if(xmlPullParser.next() == XmlPullParser.TEXT)
-				{
-					result = xmlPullParser.getText();
-					xmlPullParser.nextTag();
-				}
-
-				if(name.equalsIgnoreCase("title"))title = result;
-				else if(name.equalsIgnoreCase("link"))link = result;
-				else if(name.equalsIgnoreCase("description"))description = result;
-
-				if(img == null)
-				{
-					if(name.equalsIgnoreCase("enclosure")
-						&& xmlPullParser.getAttributeValue(null, "type") != null
-						&& xmlPullParser.getAttributeValue(null, "type").startsWith("image/"))
-					{
-						img = xmlPullParser.getAttributeValue(null, "url");
-					}
-					else if(description != null)
-					{
-		if(description.length() > 10)Log.e(TAG, "DESC: -------------- "+description.substring(0, 10));
-						Document doc = Jsoup.parse(description);
-						Elements images = doc.select("img");
-						if(images.size() > 0)img = images.get(0).attr("src");
-					}
-				}
-
-Log.e(TAG, "----------------a-------------Parsing name ==> " + name);
-				
-				Log.e(TAG, "-----"+title+" ------- "+link+" --- "+img);
-			}
-			return items;
-		}
-		finally
-		{
-			inputStream.close();
-		}
-	}*/
-	public List<RssModel> parseFeed(InputStream inputStream) throws XmlPullParserException, IOException
-	{
-		String title = null;
-		String description = null;
-		String link = null;
-		String img = null;
-		boolean isItem = false;
-		List<RssModel> items = new ArrayList<>();
-		
-		try
-		{
-			XmlPullParser xmlPullParser = Xml.newPullParser();
-			xmlPullParser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
-			xmlPullParser.setInput(inputStream, null);
-			
-			//xmlPullParser.nextTag();
-			while(xmlPullParser.next() != XmlPullParser.END_DOCUMENT)
-			{
-				String name = xmlPullParser.getName();
-				if(name == null) continue;
-				Log.e(TAG, "name -------------------------------------"+name);
-				
-				int eventType = xmlPullParser.getEventType();
-				if(!isItem && eventType == XmlPullParser.START_TAG && name.equalsIgnoreCase("item"))
-				{
-					Log.e(TAG, "BEG ITEM -------------------------------------");
-				    isItem = true;
-				    continue;
-				}
-				if(!isItem)continue;
-				if(eventType == XmlPullParser.END_TAG && name.equalsIgnoreCase("item"))
-				{
-					//if(name.equalsIgnoreCase("item")) isItem = false;
-					Log.e(TAG, "NEW ITEM------------------------"+title+" -"+img+"- "+link);
-					RssModel item = new RssModel(title, description, link, img);
-					items.add(item);
-					
-					title = null;
-				    description = null;
-				    link = null;
-				    img = null;
-				    isItem = false;
-					
-					continue;
-				}
-				
-				
-				Log.e(TAG, "---------------------------------------Parsing name ==> " + name);
-				String result = "";
-				if(xmlPullParser.next() == XmlPullParser.TEXT)
-				{
-				    result = xmlPullParser.getText();
-				    xmlPullParser.nextTag();
-				}
-				
-				if(name.equalsIgnoreCase("title"))	title = result;
-				else if(name.equalsIgnoreCase("link")) link = result;
-				else if(name.equalsIgnoreCase("description")) description = result;
-				
-				if(img == null)
-				{
-					if(name.equalsIgnoreCase("enclosure")
-						&& xmlPullParser.getAttributeValue(null, "type") != null
-						&& xmlPullParser.getAttributeValue(null, "type").startsWith("image/"))
-					{
-						img = xmlPullParser.getAttributeValue(null, "url");
-					}
-					else if(description != null)
-					{
-						//TODO: Con pull parser
-						Document doc = Jsoup.parse(description);
-						Elements images = doc.select("img");
-						if(images.size() > 0)
-						{
-							img = images.get(0).attr("src");
-							//if(img != null && img.length() > 3 && img.startsWith("//")) img = "http://"+img.substring(2);
-						}
-					}
-				}
-				
-				Log.e(TAG, "---------------------------------------val ==> " + title + " : "+link+" : : "+img);
-		    }
-		
-		    return items;
-		}
-		finally
-		{
-			Log.e(TAG, "*************************************** "+items.size());
-			inputStream.close();
-		}
-    }
     
 
 	////////////////////////////////////////////////////////////////////////////////////////////////
 	private class FetchRssTask extends AsyncTask<Void, Void, Boolean>
 	{
-		//private String urlLink = "http://www.xatakandroid.com/tag/feeds/rss2.xml";
-		private String urlLink = "https://www.nasa.gov/rss/dyn/breaking_news.rss";
+		private String urlLink = "http://www.xatakandroid.com/tag/feeds/rss2.xml";
+		//private String urlLink = "https://www.nasa.gov/rss/dyn/breaking_news.rss";
 
 		@Override
 		protected void onPreExecute()
@@ -301,7 +141,7 @@ Log.e(TAG, "----------------a-------------Parsing name ==> " + name);
 
 				URL url = new URL(urlLink);
 				InputStream inputStream = url.openConnection().getInputStream();
-				_FeedList = parseFeed(inputStream);
+				_FeedList = RssParser.parseFeed(inputStream);
 				return true;
 			}
 			catch(Exception e)

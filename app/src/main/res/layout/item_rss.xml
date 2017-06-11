@@ -1,57 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:app="http://schemas.android.com/apk/res-auto"
+	android:orientation="vertical"
 	android:layout_width="match_parent"
 	android:layout_height="wrap_content">
 
-	<ImageView
-		android:id="@+id/img"
+	<RelativeLayout
 		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_alignParentStart="true"
-		android:layout_centerVertical="true"
-		android:layout_marginStart="5dp"
-		android:layout_marginTop="15dp"
-		android:contentDescription="rss image"
-		app:srcCompat="@mipmap/rss_logo"
-		/>
+		android:layout_height="wrap_content">
 
-	<TextView
-		android:id="@+id/txtTitulo"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:text="TITULO DEL RSS"
-		android:maxLines="1"
-		android:textStyle="bold"
-		android:layout_alignTop="@+id/img"
-		android:layout_toEndOf="@+id/img"
-		android:layout_marginStart="10dp"/>
+		<ImageView
+			android:id="@+id/img"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_alignParentStart="true"
+			android:layout_centerVertical="true"
+			android:layout_marginStart="5dp"
+			android:layout_marginTop="15dp"
+			android:contentDescription="@string/img_hint"
+			app:srcCompat="@mipmap/rss_logo"
+			/>
 
-	<TextView
-		android:id="@+id/txtDescripcion"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_marginTop="2dp"
-		android:text="Descripcion de la noticia RSS etc\n Bla bla bla y puede ocupar un par\n de lineas"
-		android:layout_below="@+id/txtTitulo"
-		android:maxLines="2"
-		android:layout_alignStart="@+id/txtTitulo"/>
+		<TextView
+			android:id="@+id/txtTitulo"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="TITULO DEL RSS"
+			android:maxLines="1"
+			android:textStyle="bold"
+			android:layout_alignTop="@+id/img"
+			android:layout_toEndOf="@+id/img"
+			android:layout_marginStart="10dp"/>
 
-	<Button
-		android:id="@+id/btnLink"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_alignStart="@+id/txtDescripcion"
-		android:layout_below="@+id/txtDescripcion"
-		android:layout_marginTop="5dp"
-		android:text="@string/ver_en_el_navegador"/>
+		<TextView
+			android:id="@+id/txtDescripcion"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginTop="2dp"
+			android:text="Descripcion de la noticia RSS etc\n Bla bla bla y puede ocupar un par\n de lineas"
+			android:layout_below="@+id/txtTitulo"
+			android:maxLines="2"
+			android:layout_alignStart="@+id/txtTitulo"/>
+
+		<Button
+			android:id="@+id/btnLink"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_alignStart="@+id/txtDescripcion"
+			android:layout_below="@+id/txtDescripcion"
+			android:layout_marginTop="2dp"
+			android:drawableStart="@android:drawable/ic_menu_directions"
+			style="?android:attr/borderlessButtonStyle"
+			android:text="@string/ver_en_el_navegador"/>
+
+	</RelativeLayout>
 
 	<View
 	    android:layout_width="match_parent"
 	    android:layout_height="1dp"
-		android:layout_alignStart="@+id/img"
-		android:layout_below="@+id/btnLink"
 		android:layout_marginTop="2dp"
 	    android:background="@color/colorAccent" />
 
-</RelativeLayout>
+</LinearLayout>

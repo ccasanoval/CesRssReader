@@ -13,20 +13,20 @@ android {
     }
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
 }
 
 dependencies {
-	compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile fileTree(include: ['*.jar'], dir: 'libs')
 
-	// TEST
-	androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
-		exclude group: 'com.android.support', module: 'support-annotations'
-	})
-	testCompile 'junit:junit:4.12'
+    // TEST
+    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+    testCompile 'junit:junit:4.12'
 
 	// ANDROID
 	compile 'com.android.support:appcompat-v7:25.3.1'
@@ -42,5 +42,4 @@ dependencies {
 
 	// HTML PARSER
 	compile 'org.jsoup:jsoup:1.10.2'
-
 }
