@@ -1,6 +1,8 @@
 package com.cesoft.cesrssreader;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -54,21 +56,17 @@ public class RssListAdapter extends RecyclerView.Adapter<RssListAdapter.RssModel
 	    ((TextView)holder.rssFeedView.findViewById(R.id.txtDescripcion)).setText(rssModel.getDescripcion());
 
 		((Button)holder.rssFeedView.findViewById(R.id.btnLink)).setTag(rssModel.getLink());
-
-		/*if(_RssFeedModels.get(position).getImg() != null) {
-        ParseFile image = (ParseFile) parseList.get(position).get("logo");
-        String url = image.getUrl();
-        Glide.with(context)
-                .load(url)
-                .placeholder(R.drawable.piwo_48)
-                .transform(new CircleTransform(context))
-                .into(holder.imageView);
-    } else {
-        // make sure Glide doesn't load anything into this view until told otherwise
-        Glide.clear(holder.imageView);
-        // remove the placeholder (optional); read comments below
-        holder.imageView.setImageDrawable(null);
-    }*/
+		((Button)holder.rssFeedView.findViewById(R.id.btnLink)).setOnClickListener(
+			new View.OnClickListener()
+			{
+				@Override
+				public void onClick(View view)
+				{
+					Log.e("TAG : ", "-------------------TAG---------"+view.getTag());
+					Intent intent= new Intent(Intent.ACTION_VIEW, Uri.parse(view.getTag().toString()));
+					_context.startActivity(intent);
+				}
+			});
 
 		if(rssModel.getImg() != null)
 		{
@@ -82,7 +80,6 @@ public class RssListAdapter extends RecyclerView.Adapter<RssListAdapter.RssModel
 	@Override
 	public int getItemCount()
 	{
-		Log.e("Adapter", "getCount : ------------------------"+_RssModels.size());
 	    return _RssModels.size();
 	}
 }

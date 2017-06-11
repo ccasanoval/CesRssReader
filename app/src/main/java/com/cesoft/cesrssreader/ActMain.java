@@ -184,89 +184,104 @@ Log.e(TAG, "----------------a-------------Parsing name ==> " + name);
 			inputStream.close();
 		}
 	}*/
-	public List<RssModel> parseFeed(InputStream inputStream) throws XmlPullParserException, IOException {
-        String title = null;
-        String link = null;
-        String description = null;
-        boolean isItem = false;
-        List<RssModel> items = new ArrayList<>();
-
-        try {
-            XmlPullParser xmlPullParser = Xml.newPullParser();
-            xmlPullParser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
-            xmlPullParser.setInput(inputStream, null);
-
-            xmlPullParser.nextTag();
-            while (xmlPullParser.next() != XmlPullParser.END_DOCUMENT) {
-                int eventType = xmlPullParser.getEventType();
-
-                String name = xmlPullParser.getName();
-                if(name == null)
-                    continue;
-
-                if(eventType == XmlPullParser.END_TAG) {
-                    if(name.equalsIgnoreCase("item")) {
-                        isItem = false;
-                    }
-                    continue;
-                }
-
-                if (eventType == XmlPullParser.START_TAG) {
-                    if(name.equalsIgnoreCase("item")) {
-                        isItem = true;
-                        continue;
-                    }
-                }
-
-                Log.d("MainActivity", "Parsing name ==> " + name);
-                String result = "";
-                if (xmlPullParser.next() == XmlPullParser.TEXT) {
-                    result = xmlPullParser.getText();
-                    xmlPullParser.nextTag();
-                }
-
-                if (name.equalsIgnoreCase("title")) {
-                    title = result;
-                } else if (name.equalsIgnoreCase("link")) {
-                    link = result;
-                } else if (name.equalsIgnoreCase("description")) {
-                    description = result;
-                }
-
-                if (title != null && link != null && description != null)
-                {
-                    if(isItem)
-                    {
-						Log.e(TAG, "ITEM------------------------"+title+" -- "+link);
-                        RssModel item = new RssModel(title, description, link, null);
-                        items.add(item);
-                    }
-                   /* else {
-                        mFeedTitle = title;
-                        mFeedLink = link;
-                        mFeedDescription = description;
-                    }*/
-
-                    title = null;
-                    link = null;
-                    description = null;
-                    isItem = false;
-                }
-            }
-
-            return items;
-        }
-        finally
+	public List<RssModel> parseFeed(InputStream inputStream) throws XmlPullParserException, IOException
+	{
+		String title = null;
+		String description = null;
+		String link = null;
+		String img = null;
+		boolean isItem = false;
+		List<RssModel> items = new ArrayList<>();
+		
+		try
+		{
+			XmlPullParser xmlPullParser = Xml.newPullParser();
+			xmlPullParser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
+			xmlPullParser.setInput(inputStream, null);
+			
+			//xmlPullParser.nextTag();
+			while(xmlPullParser.next() != XmlPullParser.END_DOCUMENT)
+			{
+				String name = xmlPullParser.getName();
+				if(name == null) continue;
+				Log.e(TAG, "name -------------------------------------"+name);
+				
+				int eventType = xmlPullParser.getEventType();
+				if(!isItem && eventType == XmlPullParser.START_TAG && name.equalsIgnoreCase("item"))
+				{
+					Log.e(TAG, "BEG ITEM -------------------------------------");
+				    isItem = true;
+				    continue;
+				}
+				if(!isItem)continue;
+				if(eventType == XmlPullParser.END_TAG && name.equalsIgnoreCase("item"))
+				{
+					//if(name.equalsIgnoreCase("item")) isItem = false;
+					Log.e(TAG, "NEW ITEM------------------------"+title+" -"+img+"- "+link);
+					RssModel item = new RssModel(title, description, link, img);
+					items.add(item);
+					
+					title = null;
+				    description = null;
+				    link = null;
+				    img = null;
+				    isItem = false;
+					
+					continue;
+				}
+				
+				
+				Log.e(TAG, "---------------------------------------Parsing name ==> " + name);
+				String result = "";
+				if(xmlPullParser.next() == XmlPullParser.TEXT)
+				{
+				    result = xmlPullParser.getText();
+				    xmlPullParser.nextTag();
+				}
+				
+				if(name.equalsIgnoreCase("title"))	title = result;
+				else if(name.equalsIgnoreCase("link")) link = result;
+				else if(name.equalsIgnoreCase("description")) description = result;
+				
+				if(img == null)
+				{
+					if(name.equalsIgnoreCase("enclosure")
+						&& xmlPullParser.getAttributeValue(null, "type") != null
+						&& xmlPullParser.getAttributeValue(null, "type").startsWith("image/"))
+					{
+						img = xmlPullParser.getAttributeValue(null, "url");
+					}
+					else if(description != null)
+					{
+						//TODO: Con pull parser
+						Document doc = Jsoup.parse(description);
+						Elements images = doc.select("img");
+						if(images.size() > 0)
+						{
+							img = images.get(0).attr("src");
+							//if(img != null && img.length() > 3 && img.startsWith("//")) img = "http://"+img.substring(2);
+						}
+					}
+				}
+				
+				Log.e(TAG, "---------------------------------------val ==> " + title + " : "+link+" : : "+img);
+		    }
+		
+		    return items;
+		}
+		finally
 		{
 			Log.e(TAG, "*************************************** "+items.size());
-            inputStream.close();
-        }
+			inputStream.close();
+		}
     }
+    
 
 	////////////////////////////////////////////////////////////////////////////////////////////////
 	private class FetchRssTask extends AsyncTask<Void, Void, Boolean>
 	{
-		private String urlLink = "http://www.xatakandroid.com/tag/feeds/rss2.xml";
+		//private String urlLink = "http://www.xatakandroid.com/tag/feeds/rss2.xml";
+		private String urlLink = "https://www.nasa.gov/rss/dyn/breaking_news.rss";
 
 		@Override
 		protected void onPreExecute()
