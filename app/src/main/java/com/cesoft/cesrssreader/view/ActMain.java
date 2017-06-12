@@ -1,6 +1,5 @@
 package com.cesoft.cesrssreader.view;
 
-import android.app.SearchManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
@@ -10,7 +9,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,14 +21,13 @@ import com.cesoft.cesrssreader.adapter.RssListAdapter;
 import com.cesoft.cesrssreader.model.RssModel;
 import com.cesoft.cesrssreader.presenter.PreMain;
 
-import java.util.ArrayList;
 import java.util.List;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Created by Cesar Casanova on 10/06/2017.
-public class ActMain extends AppCompatActivity implements PreMain.IntVista//, FetchRss.Callback//, SearchViewCompat.OnQueryTextListener
+public class ActMain extends AppCompatActivity implements PreMain.IntVista
 {
-	private static final String TAG = "ActMAin";
+	//private static final String TAG = "ActMAin";
 
 	private PreMain _presenter = new PreMain();
 	
@@ -48,35 +45,11 @@ public class ActMain extends AppCompatActivity implements PreMain.IntVista//, Fe
 		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
 		
-
-		_presenter.setVista(this);
-
-		/*TODO: move to unit test
-		Log.e(TAG, "ooooooooooooooooo"+ RssParser.str2date("Wed, 07 Jun 2017 16:00 EDT"));
-		 
-		ArrayList<RssModel> items = new ArrayList<RssModel>();
-		items.add(new RssModel("1", "1", "1", "1", new Date()));		try{Thread.sleep(100);}catch(Exception e){}
-		items.add(new RssModel("2", "2", "2", "2", new Date()));		try{Thread.sleep(100);}catch(Exception e){}
-		items.add(new RssModel("3", "3", "3", "3", new Date()));		try{Thread.sleep(100);}catch(Exception e){}
-		Collections.sort(items, new Comparator<RssModel>()
-			{
-				public int compare(RssModel o1, RssModel o2)
-				{
-					if(o1.getFecha() == null || o2.getFecha() == null) return 0;
-					return o2.getFecha().compareTo(o1.getFecha());
-				}
-			});
-		for(RssModel o : items)
-		{
-			Log.e(TAG, "ITEM : "+o.getTitulo());
-		}*/
-		//---
-		
 		_lblFeedTitle = (TextView)findViewById(R.id.lblFeedTitle);
 
 		_lista = (RecyclerView)findViewById(R.id.rss_list);
 		_lista.setLayoutManager(new LinearLayoutManager(this));
-		_lista.setAdapter(new RssListAdapter(this, new ArrayList<RssModel>()));
+		//_lista.setAdapter(new RssListAdapter(this, new ArrayList<RssModel>()));
 
 		_SwipeLayout = (SwipeRefreshLayout)findViewById(R.id.swipeRefreshLayout);
 		_SwipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener()
@@ -87,17 +60,16 @@ public class ActMain extends AppCompatActivity implements PreMain.IntVista//, Fe
 				_presenter.cargarDatos();
 			}
 		});
-		_presenter.cargarDatos();
-		handleIntent(getIntent());
+		
+		//handleIntent(getIntent());
 	}
 	//----------------------------------------------------------------------------------------------
-	@Override
+	/*@Override
 	public void onNewIntent(Intent i)
 	{
 		handleIntent(getIntent());
 	}
 	//----------------------------------------------------------------------------------------------
-	//
 	private void handleIntent(Intent intent)
 	{
 		//BUSQUEDAS :
@@ -107,6 +79,20 @@ public class ActMain extends AppCompatActivity implements PreMain.IntVista//, Fe
 			Log.e(TAG, "---------------BUSCAR-----------"+query);
 			//use the query to search your data somehow
 		}
+	}*/
+	@Override
+	public void onResume()
+	{
+		super.onResume();
+		_presenter.setVista(this);
+		_presenter.cargarDatos();
+		//com.google.firebase.crash.FirebaseCrash.report(new Exception("Crash reporting test"));
+	}
+	//----------------------------------------------------------------------------------------------
+	@Override public void onPause()
+	{
+		super.onPause();
+		_presenter.clear();
 	}
 
 	//----------------------------------------------------------------------------------------------
