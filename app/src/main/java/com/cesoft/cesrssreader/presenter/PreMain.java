@@ -118,8 +118,13 @@ public class PreMain implements FetchRss.Callback
 					@Override
 					public void onDatos(List<RssModel> lista)
 					{
-						//TODO: show titulo...
-						_vista.showEntradas(lista);
+						//TODO: guardar y cargar la fuente de RSS Feed...
+						if(_vista != null)
+						{
+							_vista.showTitulo(_vista.getApp().getString(R.string.elementos_cache));
+							_vista.showEntradas(lista);
+							_vista.getApp().getRssFeed().setEntradas(lista);
+						}
 					}
 				});
 			}

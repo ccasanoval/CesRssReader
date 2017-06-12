@@ -11,4 +11,5 @@
 	<string name="leer">Leer</string>
 	<string name="url_incorrecta">La URL introducida es incorrecta</string>
 	<string name="error_load_rss">Error al cargar los datos del canal RSS</string>
+	<string name="elementos_cache">Elementos en caché</string>
 </resources>
