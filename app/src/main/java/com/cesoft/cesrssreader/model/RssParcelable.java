@@ -6,7 +6,7 @@ import android.os.Parcelable;
 import java.util.Date;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-// Created by sandra on 11/06/2017.
+// Created by Cesar Casanova on 11/06/2017.
 public class RssParcelable implements Parcelable
 {
 	private RssModel _data;

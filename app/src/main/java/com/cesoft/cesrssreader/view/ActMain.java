@@ -20,20 +20,20 @@ import android.widget.Toast;
 import com.cesoft.cesrssreader.App;
 import com.cesoft.cesrssreader.R;
 import com.cesoft.cesrssreader.adapter.RssListAdapter;
-import com.cesoft.cesrssreader.model.RssFeedModel;
 import com.cesoft.cesrssreader.model.RssModel;
-import com.cesoft.cesrssreader.net.FetchRss;
+import com.cesoft.cesrssreader.presenter.PreMain;
 
 import java.util.ArrayList;
 import java.util.List;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Created by Cesar Casanova on 10/06/2017.
-public class ActMain extends AppCompatActivity implements FetchRss.Callback//, SearchViewCompat.OnQueryTextListener
+public class ActMain extends AppCompatActivity implements PreMain.IntVista//, FetchRss.Callback//, SearchViewCompat.OnQueryTextListener
 {
 	private static final String TAG = "ActMAin";
 
-	private App _app;
+	private PreMain _presenter = new PreMain();
+	
 	private RecyclerView _lista;
 	private SwipeRefreshLayout _SwipeLayout;
 	private TextView _lblFeedTitle;
@@ -44,10 +44,12 @@ public class ActMain extends AppCompatActivity implements FetchRss.Callback//, S
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.act_main);
+		
 		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
 		
-		_app = (App)getApplication();
+
+		_presenter.setVista(this);
 
 		/*TODO: move to unit test
 		Log.e(TAG, "ooooooooooooooooo"+ RssParser.str2date("Wed, 07 Jun 2017 16:00 EDT"));
@@ -82,10 +84,10 @@ public class ActMain extends AppCompatActivity implements FetchRss.Callback//, S
 			@Override
 			public void onRefresh()
 			{
-				new FetchRss(ActMain.this).execute(_app.getRssFeed().getFuente().getUrl());
+				_presenter.cargarDatos();
 			}
 		});
-		new FetchRss(ActMain.this).execute(_app.getRssFeed().getFuente().getUrl());
+		_presenter.cargarDatos();
 		handleIntent(getIntent());
 	}
 	//----------------------------------------------------------------------------------------------
@@ -114,13 +116,6 @@ public class ActMain extends AppCompatActivity implements FetchRss.Callback//, S
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.menu_main, menu);
 		
-		// Associate searchable configuration with the SearchView
-		/*SearchManager searchManager = (SearchManager)getSystemService(Context.SEARCH_SERVICE);
-		SearchViewCompat searchView = (SearchViewCompat)menu.findItem(R.id.buscar).getActionView();
-		searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-        searchView.setSubmitButtonEnabled(true);
-        searchView.setOnQueryTextListener(this);*/
-		
 		MenuItem item = menu.add("Search");
 		item.setIcon(android.R.drawable.ic_menu_search);
 		MenuItemCompat.setShowAsAction(item, MenuItemCompat.SHOW_AS_ACTION_ALWAYS | MenuItemCompat.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW);
@@ -136,14 +131,7 @@ public class ActMain extends AppCompatActivity implements FetchRss.Callback//, S
 					//Log.e(TAG, "-------------- SEARCH ----------------"+query);
 					if( ! query.isEmpty())
 					{
-						query = query.toLowerCase();
-						List<RssModel> itemsFiltered = new ArrayList<>();
-						for(RssModel item : _app.getRssFeed().getEntradas())
-						{
-							if(item.getTitulo().toLowerCase().contains(query))
-								itemsFiltered.add(item);
-						}
-						_lista.setAdapter(new RssListAdapter(ActMain.this, itemsFiltered));
+						_lista.setAdapter(new RssListAdapter(ActMain.this, _presenter.getDatosFiltrados(query)));
 					}
 					return true;
 				}
@@ -151,7 +139,7 @@ public class ActMain extends AppCompatActivity implements FetchRss.Callback//, S
 				public boolean onQueryTextChange(String newText)
 				{
 					if(newText.isEmpty())//Cancelar busqueda
-						_lista.setAdapter(new RssListAdapter(ActMain.this, _app.getRssFeed().getEntradas()));
+						_lista.setAdapter(new RssListAdapter(ActMain.this, _presenter.getDatos()));
 					return true;
 				}
 			});
@@ -159,7 +147,6 @@ public class ActMain extends AppCompatActivity implements FetchRss.Callback//, S
 		}
 		return true;
 	}
-//https://coderwall.com/p/zpwrsg/add-search-function-to-list-view-in-android TODO
 	//----------------------------------------------------------------------------------------------
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item)
@@ -188,39 +175,37 @@ public class ActMain extends AppCompatActivity implements FetchRss.Callback//, S
 			if(resultCode == RESULT_OK)
 			{
 				String url = data.getStringExtra(ActSource.SOURCE_URL);
-				if(url != null && url.length() > 0)
-				{
-					_app.setRssFeed(new RssFeedModel(url));
-					new FetchRss(ActMain.this).execute(url);
-				}
+				_presenter.setFuente(url);
 			}
 			break;
 		}
 	}
 	
-	///////////////// FetchRss.Callback
+	// Implements PreMain.IntVista
 	//
-	//----------------------------------------------------------------------------------------------
 	@Override
-	public void onPreExecute()
+	public void setRefreshing(boolean b)
 	{
-		_SwipeLayout.setRefreshing(true);
+		_SwipeLayout.setRefreshing(b);
 	}
-	//----------------------------------------------------------------------------------------------
 	@Override
-	public void onPostExecute(Boolean success, RssFeedModel feed)
+	public App getApp()
 	{
-		_SwipeLayout.setRefreshing(false);
-		if(success)
-		{
-			_app.setRssFeed(feed);
-			_lista.setAdapter(new RssListAdapter(this, feed.getEntradas()));
-			_lblFeedTitle.setText(feed.getFuente().getTitulo());
-				Log.e(TAG, "**********************"+feed.getFuente().getTitulo());
-		}
-		else
-		{
-			Toast.makeText(this, "Enter a valid Rss feed url", Toast.LENGTH_LONG).show();
-		}
+		return (App)getApplication();
+	}
+	@Override
+	public void showEntradas(List<RssModel> items)
+	{
+		_lista.setAdapter(new RssListAdapter(this, items));
+	}
+	@Override
+	public void showTitulo(String titulo)
+	{
+		_lblFeedTitle.setText(titulo);
+	}
+	@Override
+	public void showError(int error)
+	{
+		Toast.makeText(this,error, Toast.LENGTH_LONG).show();
 	}
 }

@@ -3,7 +3,7 @@ package com.cesoft.cesrssreader.model;
 import java.util.List;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-// Created by sandra on 12/06/2017.
+// Created by Cesar Casanova on 12/06/2017.
 public class RssFeedModel
 {
 	protected RssSource _source;
