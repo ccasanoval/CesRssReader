@@ -1,7 +1,6 @@
 package com.cesoft.cesrssreader.presenter;
 
 import android.content.Context;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
@@ -130,7 +129,7 @@ public class PreMain implements FetchRss.Callback
 	}
 	
 	//----------------------------------------------------------------------------------------------
-	public boolean isOnline()
+	private boolean isOnline()
 	{
 		ConnectivityManager cm = (ConnectivityManager)_vista.getApp().getSystemService(Context.CONNECTIVITY_SERVICE);
 		NetworkInfo netInfo = cm.getActiveNetworkInfo();

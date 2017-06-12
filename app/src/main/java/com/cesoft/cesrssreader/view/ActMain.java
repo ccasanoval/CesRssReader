@@ -89,9 +89,9 @@ public class ActMain extends AppCompatActivity implements PreMain.IntVista
 		//com.google.firebase.crash.FirebaseCrash.report(new Exception("Crash reporting test"));
 	}
 	//----------------------------------------------------------------------------------------------
-	@Override public void onPause()
+	@Override public void onStop()
 	{
-		super.onPause();
+		super.onStop();
 		_presenter.clear();
 	}
 
