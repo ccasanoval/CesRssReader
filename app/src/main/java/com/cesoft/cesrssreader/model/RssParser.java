@@ -53,6 +53,7 @@ public class RssParser
 		Date fecha = null;
 		//
 		boolean isItem = false;
+		boolean isHead = true;
 		ArrayList<RssModel> items = new ArrayList<>();
 		RssFeedModel feed = new RssFeedModel(null);
 		feed.setEntradas(items);
@@ -78,12 +79,18 @@ public class RssParser
 				    continue;
 				}
 				/// Entradas Cabecera
-				else if(!isItem && xmlPullParser.next() == XmlPullParser.TEXT)
+				else if(isHead && !isItem && xmlPullParser.next() == XmlPullParser.TEXT)
 				{
+					//for(int i)
 				    String s = xmlPullParser.getText();
 				    xmlPullParser.nextTag();
-					//Log.e(TAG, "HEADER-----------------------"+name+"="+s);
-					if(name.equalsIgnoreCase("title")) feed.getFuente().setTitulo(s);
+					if(name.equalsIgnoreCase("title"))
+					{
+						feed.getFuente().setTitulo(s);
+						isHead = false;
+						continue;
+					}
+
 					//else if(name.equalsIgnoreCase("description")) feed.setDescripcion(s);
 					//else if(name.equalsIgnoreCase("link")) feed.setUTL(s);
 					continue;
@@ -155,7 +162,7 @@ public class RssParser
 			{
 				Log.e(TAG, "parseFeed:e: ", e);
 			}
-			
+
 		    return feed;
 		}
 		//finally{inputStream.close();}

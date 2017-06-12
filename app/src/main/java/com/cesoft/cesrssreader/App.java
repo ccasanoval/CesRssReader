@@ -12,11 +12,15 @@ import com.cesoft.cesrssreader.model.RssSource;
 // Created by Cesar Casanova on 12/06/20167
 public class App extends Application
 {
+	private static App _this;
+		public static App getInstance(){return _this;}
+	
 	private RssFeedModel _rssFeed = new RssFeedModel(null);
 		public RssFeedModel getRssFeed(){return _rssFeed;}
 		public void setRssFeed(@NonNull RssFeedModel v){_rssFeed=v;}
 	@Override public void onCreate()
 	{
 		super.onCreate();
+		_this = this;
 	}
 }

@@ -6,9 +6,10 @@ public class RssSource
 {
 	private String _url =
 			//"http://www.xatakandroid.com/tag/feeds/rss2.xml";
-			"https://www.nasa.gov/rss/dyn/breaking_news.rss";
+			//"https://www.nasa.gov/rss/dyn/breaking_news.rss";
+			"https://actualidad.rt.com/feeds/all.rss";
 	private String _titulo = "";
-	private String _descripcion = "";
+	//private String _descripcion = "";
 	
 	public RssSource(){}
 	RssSource(String url, String titulo, String descripcion)
@@ -16,15 +17,15 @@ public class RssSource
 		if(url != null && !url.isEmpty())
 		_url = url;
 		_titulo = titulo;
-		_descripcion = descripcion;
+		//_descripcion = descripcion;
 	}
 	
 	public String getUrl(){return _url;}
 	public String getTitulo(){return _titulo;}
-	public String getDescripcion(){return _descripcion;}
+	//public String getDescripcion(){return _descripcion;}
 	
 	public void setUrl(String v){_url=v;}
 	public void setTitulo(String v){_titulo=v;}
-	public void setDescripcion(String v){_descripcion=v;}
+	//public void setDescripcion(String v){_descripcion=v;}
 	
 }

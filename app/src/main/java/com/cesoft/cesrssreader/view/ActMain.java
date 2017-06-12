@@ -175,11 +175,6 @@ public class ActMain extends AppCompatActivity implements PreMain.IntVista
 		_SwipeLayout.setRefreshing(b);
 	}
 	@Override
-	public App getApp()
-	{
-		return (App)getApplication();
-	}
-	@Override
 	public void showEntradas(List<RssModel> items)
 	{
 		_lista.setAdapter(new RssListAdapter(this, items));

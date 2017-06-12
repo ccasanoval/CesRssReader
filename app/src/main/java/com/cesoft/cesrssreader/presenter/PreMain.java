@@ -3,6 +3,7 @@ package com.cesoft.cesrssreader.presenter;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.util.Log;
 
 import com.cesoft.cesrssreader.App;
 import com.cesoft.cesrssreader.R;
@@ -23,11 +24,12 @@ import rx.schedulers.Schedulers;
 // Created by Cesar Casanova on 12/06/2017.
 public class PreMain implements FetchRss.Callback
 {
+	private static String TAG = PreMain.class.getSimpleName();
+	
 	////////////////////////////////////////////////////////////////////////////////////////////////
 	public interface IntVista
 	{
 		void setRefreshing(boolean b);
-		App getApp();
 		void showTitulo(String titulo);
 		void showEntradas(List<RssModel> items);
 		void showError(int error);
@@ -48,24 +50,24 @@ public class PreMain implements FetchRss.Callback
 	{
 		if(url != null && url.length() > 0)//TODO: check url?
 		{
-			_vista.getApp().setRssFeed(new RssFeedModel(url));
+			App.getInstance().setRssFeed(new RssFeedModel(url));
 			cargarDatos();
 		}
 		//else error
 	}
 	public void cargarDatos()
 	{
-		new FetchRss(this).execute(_vista.getApp().getRssFeed().getFuente().getUrl());
+		new FetchRss(this).execute(App.getInstance().getRssFeed().getFuente().getUrl());
 	}
 	public List<RssModel> getDatos()
 	{
-		return _vista.getApp().getRssFeed().getEntradas();
+		return App.getInstance().getRssFeed().getEntradas();
 	}
 	public List<RssModel> getDatosFiltrados(String query)
 	{
 		query = query.toLowerCase();
 		List<RssModel> itemsFiltered = new ArrayList<>();
-		for(RssModel item : _vista.getApp().getRssFeed().getEntradas())
+		for(RssModel item : App.getInstance().getRssFeed().getEntradas())
 		{
 			if(item.getTitulo().toLowerCase().contains(query))
 				itemsFiltered.add(item);
@@ -80,7 +82,7 @@ public class PreMain implements FetchRss.Callback
 	@Override
 	public void onPreExecute()
 	{
-		_vista.setRefreshing(true);
+		if(_vista != null)_vista.setRefreshing(true);
 	}
 	//----------------------------------------------------------------------------------------------
 	@Override
@@ -91,12 +93,12 @@ public class PreMain implements FetchRss.Callback
 		if(success)
 		{
 			// Mostrar RSS Feed en vista
-			_vista.getApp().setRssFeed(feed);
+			App.getInstance().setRssFeed(feed);
 			_vista.showEntradas(feed.getEntradas());
 			_vista.showTitulo(feed.getFuente().getTitulo());
 			//
 			//Guardar RSS Feed en BBDD
-			DbOpenHelper helper = new DbOpenHelper(_vista.getApp());
+			DbOpenHelper helper = new DbOpenHelper(App.getInstance());
 			SqlBrite sqlBrite = new SqlBrite.Builder().build();
 			BriteDatabase db = sqlBrite.wrapDatabaseHelper(helper, Schedulers.io());
 			DbRssItem.saveAll(db, feed.getEntradas());
@@ -105,7 +107,7 @@ public class PreMain implements FetchRss.Callback
 		{
 			if( ! isOnline())
 			{
-				DbOpenHelper helper = new DbOpenHelper(_vista.getApp());
+				DbOpenHelper helper = new DbOpenHelper(App.getInstance());
 				SqlBrite sqlBrite = new SqlBrite.Builder().build();
 				BriteDatabase db = sqlBrite.wrapDatabaseHelper(helper, Schedulers.io());
 				DbRssItem.getLista(db, new DbRssItem.Listener<RssModel>()
@@ -118,12 +120,12 @@ public class PreMain implements FetchRss.Callback
 					@Override
 					public void onDatos(List<RssModel> lista)
 					{
-						//TODO: guardar y cargar la fuente de RSS Feed...
+						//Guardar y cargar la fuente de RSS Feed...
+						App.getInstance().getRssFeed().setEntradas(lista);
 						if(_vista != null)
 						{
-							_vista.showTitulo(_vista.getApp().getString(R.string.elementos_cache));
+							_vista.showTitulo(App.getInstance().getString(R.string.elementos_cache));
 							_vista.showEntradas(lista);
-							_vista.getApp().getRssFeed().setEntradas(lista);
 						}
 					}
 				});
@@ -136,7 +138,7 @@ public class PreMain implements FetchRss.Callback
 	//----------------------------------------------------------------------------------------------
 	private boolean isOnline()
 	{
-		ConnectivityManager cm = (ConnectivityManager)_vista.getApp().getSystemService(Context.CONNECTIVITY_SERVICE);
+		ConnectivityManager cm = (ConnectivityManager)App.getInstance().getSystemService(Context.CONNECTIVITY_SERVICE);
 		NetworkInfo netInfo = cm.getActiveNetworkInfo();
 		return netInfo != null && netInfo.isConnectedOrConnecting();
 	}
