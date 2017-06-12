@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.Locale;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Created by Cesar Casanova on 11/06/2017.
@@ -24,13 +25,14 @@ public class RssParser
 {
 	private static final String TAG = RssParser.class.getSimpleName();
 	
+	//----------------------------------------------------------------------------------------------
 	private static Date str2date(String str)
 	{
 		if(str == null)return null;
 		try
 		{
 			//SimpleDateFormat format = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm zzz");//Wed, 07 Jun 2017 16:00 EDT
-			SimpleDateFormat format = new SimpleDateFormat("dd MMM yyyy HH:mm");
+			SimpleDateFormat format = new SimpleDateFormat("dd MMM yyyy HH:mm", Locale.US);
 			return format.parse(str.substring(5, 22));
 		}
 		catch(ParseException e)
@@ -42,17 +44,21 @@ public class RssParser
 	
 	//----------------------------------------------------------------------------------------------
 	// Parsea el inputStream desde la red o archivo a una lista de RssFeeds
-	public static ArrayList<RssModel> parseFeed(InputStream inputStream) throws XmlPullParserException, IOException
+	public static RssFeedModel parseFeed(InputStream inputStream) throws XmlPullParserException, IOException
 	{
 		String title = null;
 		String description = null;
 		String link = null;
 		String img = null;
 		Date fecha = null;
+		//
 		boolean isItem = false;
 		ArrayList<RssModel> items = new ArrayList<>();
+		RssFeedModel feed = new RssFeedModel();
+		feed.setEntradas(items);
 		
-		try
+		/// Traducir las etiquetas del XML para obtener los campos a usar
+		//try
 		{
 			XmlPullParser xmlPullParser = Xml.newPullParser();
 			xmlPullParser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
@@ -64,10 +70,23 @@ public class RssParser
 				if(name == null) continue;
 				
 				int eventType = xmlPullParser.getEventType();
+
+				/// Entradas Feed
 				if(!isItem && eventType == XmlPullParser.START_TAG && name.equalsIgnoreCase("item"))
 				{
 				    isItem = true;
 				    continue;
+				}
+				/// Entradas Cabecera
+				else if(!isItem && xmlPullParser.next() == XmlPullParser.TEXT)
+				{
+				    String s = xmlPullParser.getText();
+				    xmlPullParser.nextTag();
+					//Log.e(TAG, "HEADER-----------------------"+name+"="+s);
+					if(name.equalsIgnoreCase("title")) feed.getSource().setTitulo(s);
+					//else if(name.equalsIgnoreCase("description")) feed.setDescripcion(s);
+					//else if(name.equalsIgnoreCase("link")) feed.setUTL(s);
+					continue;
 				}
 				if(!isItem)continue;
 				if(eventType == XmlPullParser.END_TAG && name.equalsIgnoreCase("item"))
@@ -93,9 +112,9 @@ public class RssParser
 				    xmlPullParser.nextTag();
 				}
 				
-				if(name.equalsIgnoreCase("title"))	title = result;
-				else if(name.equalsIgnoreCase("link")) link = result;
+				if(name.equalsIgnoreCase("title")) title = result;
 				else if(name.equalsIgnoreCase("description")) description = result;
+				else if(name.equalsIgnoreCase("link")) link = result;
 				else if(name.equalsIgnoreCase("pubdate")) fecha = str2date(result);//Wed, 07 Jun 2017 16:00 EDT
 				
 				if(img == null)
@@ -121,20 +140,74 @@ public class RssParser
 		    }
 		    
 		    /// Ordenar los elementos por fecha
-			Collections.sort(items, new Comparator<RssModel>()
+			try
 			{
-				public int compare(RssModel o1, RssModel o2)
+				Collections.sort(items, new Comparator<RssModel>()
 				{
-					if(o1.getFecha() == null || o2.getFecha() == null) return 0;
-					return o2.getFecha().compareTo(o1.getFecha());
-				}
-			});
+					public int compare(RssModel o1, RssModel o2)
+					{
+						if(o1.getFecha() == null || o2.getFecha() == null) return 0;
+						return o2.getFecha().compareTo(o1.getFecha());
+					}
+				});
+			}
+			catch(Exception e)
+			{
+				Log.e(TAG, "parseFeed:e: ", e);
+			}
 			
-		    return items;
+		    return feed;
 		}
-		finally
-		{
-			inputStream.close();
-		}
+		//finally{inputStream.close();}
     }
+    
+    //----------------------------------------------------------------------------------------------
+	// Parsea el inputStream desde la red o archivo a un RssFeed que representa los datos de cabecera del Feed
+	/*public static RssModel parseFeedHeader(InputStream inputStream) throws XmlPullParserException, IOException
+	{
+		boolean isItem = false;
+		RssModel item = new RssModel("", "", "", "", new Date());
+	Log.e(TAG, "HEADER------------------------aaaaaaaaaaaaa");
+
+		/// Traducir las etiquetas del XML para obtener los campos a usar
+		try
+		{
+			XmlPullParser xmlPullParser = Xml.newPullParser();
+			xmlPullParser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
+			xmlPullParser.setInput(inputStream, null);
+			
+			while(xmlPullParser.next() != XmlPullParser.END_DOCUMENT)
+			{
+				String name = xmlPullParser.getName();
+				if(name == null) continue;
+				
+				int eventType = xmlPullParser.getEventType();
+
+				/// Entradas Feed
+				if(!isItem && eventType == XmlPullParser.START_TAG && name.equalsIgnoreCase("item"))
+				{
+				    isItem = true;
+				}
+				/// Entradas Cabecera
+				else if(!isItem && xmlPullParser.next() == XmlPullParser.TEXT)
+				{
+					Log.e(TAG, "HEADER------------------------"+name);
+				    xmlPullParser.nextTag();
+					if(name.equalsIgnoreCase("title"))
+					{
+						item.setTitulo(xmlPullParser.getText());
+						break;
+					}
+					//else if(name.equalsIgnoreCase("description")) descriptionRSS = xmlPullParser.getText();
+					//if(titleRSS != null && descriptionRSS != null)return new RssModel(titleRSS, descriptionRSS, "", "", new Date());
+				}
+		    }
+		    return item;
+		}
+		catch(Exception e)
+		{
+			Log.e(TAG, "parseFeedHeader:e: ", e);
+			return item;//null;
+		}
+    }*/
 }

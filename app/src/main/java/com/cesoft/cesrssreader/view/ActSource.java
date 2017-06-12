@@ -5,21 +5,17 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.cesoft.cesrssreader.App;
 import com.cesoft.cesrssreader.R;
-import com.cesoft.cesrssreader.model.RssSource;
-import com.cesoft.cesrssreader.net.FetchRss;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Created by Cesar Casanova on 12/06/2017.
 public class ActSource extends AppCompatActivity
 {
-	private static final String TAG = ActSource.class.getSimpleName();
+	//private static final String TAG = ActSource.class.getSimpleName();
 	public static final String SOURCE_URL = "sourceURL";
 	public static final int ID = 6969;
 	
@@ -30,29 +26,18 @@ public class ActSource extends AppCompatActivity
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.act_source);
 		
-		try
-		{
-			
-		}
-		catch(Exception e)
-		{
-			
-		}
-		
-		final App app = (App)getApplication();
 		final EditText txtURL = (EditText)findViewById(R.id.txtURL);
 		findViewById(R.id.btnOK).setOnClickListener(new View.OnClickListener()
 		{
 			@Override
 			public void onClick(View view)
 			{
-				if(txtURL.getText().length() < 1)
+				if(txtURL.getText().length() < 1)//TODO: Validar Rss Feed
 				{
 					Toast.makeText(ActSource.this, R.string.url_incorrecta, Toast.LENGTH_LONG).show();
 				}
 				else
 				{
-					//app.setRssSource(new RssSource(txtURL.getText().toString(), "", ""));
 					Intent i = new Intent();
 					i.putExtra(SOURCE_URL, txtURL.getText().toString());
 					setResult(Activity.RESULT_OK, i);

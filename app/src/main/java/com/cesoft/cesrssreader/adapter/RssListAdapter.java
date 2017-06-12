@@ -1,8 +1,7 @@
-package com.cesoft.cesrssreader;
+package com.cesoft.cesrssreader.adapter;
 
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.cesoft.cesrssreader.R;
 import com.cesoft.cesrssreader.model.RssModel;
 import com.cesoft.cesrssreader.model.RssParcelable;
 import com.cesoft.cesrssreader.view.ActDetail;
@@ -71,7 +71,7 @@ public class RssListAdapter extends RecyclerView.Adapter<RssListAdapter.RssModel
 		
 		//-------------------
 		// Boton que abre el navegador con la URL del Rss
-		holder.rssFeedView.findViewById(R.id.btnLink).setOnClickListener(
+		/*holder.rssFeedView.findViewById(R.id.btnLink).setOnClickListener(
 			new View.OnClickListener()
 			{
 				@Override
@@ -80,7 +80,7 @@ public class RssListAdapter extends RecyclerView.Adapter<RssListAdapter.RssModel
 					Intent intent= new Intent(Intent.ACTION_VIEW, Uri.parse(rssModel.getLink()));
 					_context.startActivity(intent);
 				}
-			});
+			});*/
 		//-------------------
 		// Mostrar en Detalle
 		View.OnClickListener onClick = new View.OnClickListener()

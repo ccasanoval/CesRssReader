@@ -26,11 +26,11 @@ public class RssModel //implements Comparable<RssModel>
 	{
 		return titulo;
 	}
-	/*public RssModel setTitulo(String titulo)
+	public RssModel setTitulo(String titulo)
 	{
 		this.titulo = titulo;
 		return this;
-	}*/
+	}
 	public String getDescripcion()
 	{
 		return descripcion;

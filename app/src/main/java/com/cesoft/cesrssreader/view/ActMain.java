@@ -13,11 +13,13 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cesoft.cesrssreader.App;
 import com.cesoft.cesrssreader.R;
-import com.cesoft.cesrssreader.RssListAdapter;
+import com.cesoft.cesrssreader.adapter.RssListAdapter;
+import com.cesoft.cesrssreader.model.RssFeedModel;
 import com.cesoft.cesrssreader.model.RssModel;
 import com.cesoft.cesrssreader.model.RssSource;
 import com.cesoft.cesrssreader.net.FetchRss;
@@ -34,6 +36,7 @@ public class ActMain extends AppCompatActivity implements FetchRss.Callback
 	private App _app;
 	private RecyclerView _lista;
 	private SwipeRefreshLayout _SwipeLayout;
+	private TextView _lblFeedTitle;
 
 	//----------------------------------------------------------------------------------------------
 	@Override
@@ -66,6 +69,8 @@ public class ActMain extends AppCompatActivity implements FetchRss.Callback
 			Log.e(TAG, "ITEM : "+o.getTitulo());
 		}*/
 		//---
+		
+		_lblFeedTitle = (TextView)findViewById(R.id.lblFeedTitle);
 
 		_lista = (RecyclerView)findViewById(R.id.rss_list);
 		_lista.setLayoutManager(new LinearLayoutManager(this));
@@ -135,7 +140,7 @@ public class ActMain extends AppCompatActivity implements FetchRss.Callback
 
 		return super.onOptionsItemSelected(item);
 	}
-	// Activity Result from ActSource
+	// Activity Result from ActSource : cambiar fuente del Rss
 	protected void onActivityResult(int requestCode, int resultCode, Intent data)
 	{
 		switch(requestCode)
@@ -164,12 +169,14 @@ public class ActMain extends AppCompatActivity implements FetchRss.Callback
 	}
 	//----------------------------------------------------------------------------------------------
 	@Override
-	public void onPostExecute(Boolean success, List<RssModel> lista)
+	public void onPostExecute(Boolean success, RssFeedModel feed)
 	{
 		_SwipeLayout.setRefreshing(false);
 		if(success)
 		{
-			_lista.setAdapter(new RssListAdapter(this, lista));
+			_lista.setAdapter(new RssListAdapter(this, feed.getEntradas()));
+			_lblFeedTitle.setText(feed.getSource().getTitulo());
+				Log.e(TAG, "**********************"+feed.getSource().getTitulo());
 		}
 		else
 		{

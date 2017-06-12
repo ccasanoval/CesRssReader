@@ -61,7 +61,7 @@
 			android:maxLines="2"
 			android:layout_alignStart="@+id/txtTitulo"/ -->
 
-		<Button
+		<!-- Button
 			android:id="@+id/btnLink"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
@@ -70,7 +70,7 @@
 			android:layout_marginTop="2dp"
 			android:drawableStart="@android:drawable/ic_menu_directions"
 			style="?android:attr/borderlessButtonStyle"
-			android:text="@string/ver_en_el_navegador"/>
+			android:text="@string/ver_en_el_navegador"/ -->
 
 	</RelativeLayout>
 
