@@ -9,13 +9,13 @@ public class RssFeedModel
 	protected RssSource _source;
 	protected List<RssModel> _items;
 	
-	public RssFeedModel()
+	public RssFeedModel(String url)
 	{
-		_source = new RssSource();
+		_source = new RssSource(url, "", "");
 	}
 	
-	public RssSource getSource(){return _source;}
-	public void setSource(RssSource v){_source=v;}
+	public RssSource getFuente(){return _source;}
+	public void setFuente(RssSource v){_source=v;}
 	public List<RssModel> getEntradas(){return _items;}
 	public void setEntradas(List<RssModel> v){_items=v;}
 }

@@ -56,7 +56,7 @@ public class FetchRss extends AsyncTask<String, Void, Boolean>
 			URL url = new URL(_sURL);
 			inputStream = url.openConnection().getInputStream();
 			_Feed = RssParser.parseFeed(inputStream);
-			_Feed.getSource().setUrl(_sURL);
+			_Feed.getFuente().setUrl(_sURL);
 			return true;
 		}
 		catch(Exception e)

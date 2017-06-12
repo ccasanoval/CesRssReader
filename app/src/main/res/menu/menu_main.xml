@@ -4,11 +4,11 @@
 	xmlns:tools="http://schemas.android.com/tools"
 	tools:context="com.cesoft.cesrssreader.view.ActMain" >
 	
-	<item android:id="@+id/buscar"
+	<!-- item android:id="@+id/buscar"
 		android:title="@string/buscar"
 		android:icon="@android:drawable/ic_menu_search"
 		app:showAsAction="collapseActionView|ifRoom"
-		app:actionViewClass="android.widget.SearchView" />
+		app:actionViewClass="android.widget.SearchView" / -->
 	
     <item android:id="@+id/configuracion"
 		android:title="@string/action_settings"

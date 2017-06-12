@@ -2,8 +2,9 @@ package com.cesoft.cesrssreader.view;
 
 import android.content.Intent;
 import android.net.Uri;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -31,7 +32,11 @@ public class ActDetail extends AppCompatActivity
 		setContentView(R.layout.act_detail);
 		
 		// Back arrow on action bar
-		if(getSupportActionBar() != null)getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		if(getSupportActionBar() != null)
+		{
+			getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setDisplayShowHomeEnabled(true);
+		}
 		
 		TextView txtTitulo = ((TextView)findViewById(R.id.txtTitulo));
 	    //TextView txtDescripcion = ((TextView)findViewById(R.id.txtDescripcion));

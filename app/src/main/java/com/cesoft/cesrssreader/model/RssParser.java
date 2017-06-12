@@ -54,7 +54,7 @@ public class RssParser
 		//
 		boolean isItem = false;
 		ArrayList<RssModel> items = new ArrayList<>();
-		RssFeedModel feed = new RssFeedModel();
+		RssFeedModel feed = new RssFeedModel(null);
 		feed.setEntradas(items);
 		
 		/// Traducir las etiquetas del XML para obtener los campos a usar
@@ -83,7 +83,7 @@ public class RssParser
 				    String s = xmlPullParser.getText();
 				    xmlPullParser.nextTag();
 					//Log.e(TAG, "HEADER-----------------------"+name+"="+s);
-					if(name.equalsIgnoreCase("title")) feed.getSource().setTitulo(s);
+					if(name.equalsIgnoreCase("title")) feed.getFuente().setTitulo(s);
 					//else if(name.equalsIgnoreCase("description")) feed.setDescripcion(s);
 					//else if(name.equalsIgnoreCase("link")) feed.setUTL(s);
 					continue;
@@ -127,7 +127,7 @@ public class RssParser
 					}
 					else if(description != null)
 					{
-						//TODO: Con pull parser
+						//TODO: Con pull parser es mas eficiente?
 						Document doc = Jsoup.parse(description);
 						Elements images = doc.select("img");
 						if(images.size() > 0)

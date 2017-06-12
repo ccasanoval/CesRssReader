@@ -11,8 +11,9 @@ public class RssSource
 	private String _descripcion = "";
 	
 	public RssSource(){}
-	public RssSource(String url, String titulo, String descripcion)
+	RssSource(String url, String titulo, String descripcion)
 	{
+		if(url != null && !url.isEmpty())
 		_url = url;
 		_titulo = titulo;
 		_descripcion = descripcion;

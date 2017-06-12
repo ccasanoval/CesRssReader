@@ -1,18 +1,19 @@
 package com.cesoft.cesrssreader.view;
 
 import android.app.SearchManager;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v4.widget.SearchViewCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,7 +22,6 @@ import com.cesoft.cesrssreader.R;
 import com.cesoft.cesrssreader.adapter.RssListAdapter;
 import com.cesoft.cesrssreader.model.RssFeedModel;
 import com.cesoft.cesrssreader.model.RssModel;
-import com.cesoft.cesrssreader.model.RssSource;
 import com.cesoft.cesrssreader.net.FetchRss;
 
 import java.util.ArrayList;
@@ -29,7 +29,7 @@ import java.util.List;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Created by Cesar Casanova on 10/06/2017.
-public class ActMain extends AppCompatActivity implements FetchRss.Callback
+public class ActMain extends AppCompatActivity implements FetchRss.Callback//, SearchViewCompat.OnQueryTextListener
 {
 	private static final String TAG = "ActMAin";
 
@@ -82,10 +82,10 @@ public class ActMain extends AppCompatActivity implements FetchRss.Callback
 			@Override
 			public void onRefresh()
 			{
-				new FetchRss(ActMain.this).execute(_app.getRssSource().getUrl());
+				new FetchRss(ActMain.this).execute(_app.getRssFeed().getFuente().getUrl());
 			}
 		});
-		new FetchRss(ActMain.this).execute(_app.getRssSource().getUrl());
+		new FetchRss(ActMain.this).execute(_app.getRssFeed().getFuente().getUrl());
 		handleIntent(getIntent());
 	}
 	//----------------------------------------------------------------------------------------------
@@ -94,8 +94,11 @@ public class ActMain extends AppCompatActivity implements FetchRss.Callback
 	{
 		handleIntent(getIntent());
 	}
+	//----------------------------------------------------------------------------------------------
+	//
 	private void handleIntent(Intent intent)
 	{
+		//BUSQUEDAS :
 		if(Intent.ACTION_SEARCH.equals(intent.getAction()))
 		{
 			String query = intent.getStringExtra(SearchManager.QUERY);
@@ -112,12 +115,48 @@ public class ActMain extends AppCompatActivity implements FetchRss.Callback
 		getMenuInflater().inflate(R.menu.menu_main, menu);
 		
 		// Associate searchable configuration with the SearchView
-		SearchManager searchManager = (SearchManager)getSystemService(Context.SEARCH_SERVICE);
-		SearchView searchView = (SearchView)menu.findItem(R.id.buscar).getActionView();
+		/*SearchManager searchManager = (SearchManager)getSystemService(Context.SEARCH_SERVICE);
+		SearchViewCompat searchView = (SearchViewCompat)menu.findItem(R.id.buscar).getActionView();
 		searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-    searchView.setSubmitButtonEnabled(true);
-    //searchView.setOnQueryTextListener(this);
-
+        searchView.setSubmitButtonEnabled(true);
+        searchView.setOnQueryTextListener(this);*/
+		
+		MenuItem item = menu.add("Search");
+		item.setIcon(android.R.drawable.ic_menu_search);
+		MenuItemCompat.setShowAsAction(item, MenuItemCompat.SHOW_AS_ACTION_ALWAYS | MenuItemCompat.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW);
+		View searchView = SearchViewCompat.newSearchView(this);
+		if(searchView != null)
+		{
+			SearchViewCompat.setIconified(searchView, false);
+			SearchViewCompat.setOnQueryTextListener(searchView, new SearchViewCompat.OnQueryTextListener()
+			{
+				@Override
+				public boolean onQueryTextSubmit(String query)
+				{
+					//Log.e(TAG, "-------------- SEARCH ----------------"+query);
+					if( ! query.isEmpty())
+					{
+						query = query.toLowerCase();
+						List<RssModel> itemsFiltered = new ArrayList<>();
+						for(RssModel item : _app.getRssFeed().getEntradas())
+						{
+							if(item.getTitulo().toLowerCase().contains(query))
+								itemsFiltered.add(item);
+						}
+						_lista.setAdapter(new RssListAdapter(ActMain.this, itemsFiltered));
+					}
+					return true;
+				}
+				@Override
+				public boolean onQueryTextChange(String newText)
+				{
+					if(newText.isEmpty())//Cancelar busqueda
+						_lista.setAdapter(new RssListAdapter(ActMain.this, _app.getRssFeed().getEntradas()));
+					return true;
+				}
+			});
+			MenuItemCompat.setActionView(item, searchView);
+		}
 		return true;
 	}
 //https://coderwall.com/p/zpwrsg/add-search-function-to-list-view-in-android TODO
@@ -151,13 +190,13 @@ public class ActMain extends AppCompatActivity implements FetchRss.Callback
 				String url = data.getStringExtra(ActSource.SOURCE_URL);
 				if(url != null && url.length() > 0)
 				{
-					_app.setRssSource(new RssSource(url, "", ""));
+					_app.setRssFeed(new RssFeedModel(url));
 					new FetchRss(ActMain.this).execute(url);
 				}
 			}
 			break;
 		}
-}
+	}
 	
 	///////////////// FetchRss.Callback
 	//
@@ -174,14 +213,14 @@ public class ActMain extends AppCompatActivity implements FetchRss.Callback
 		_SwipeLayout.setRefreshing(false);
 		if(success)
 		{
+			_app.setRssFeed(feed);
 			_lista.setAdapter(new RssListAdapter(this, feed.getEntradas()));
-			_lblFeedTitle.setText(feed.getSource().getTitulo());
-				Log.e(TAG, "**********************"+feed.getSource().getTitulo());
+			_lblFeedTitle.setText(feed.getFuente().getTitulo());
+				Log.e(TAG, "**********************"+feed.getFuente().getTitulo());
 		}
 		else
 		{
 			Toast.makeText(this, "Enter a valid Rss feed url", Toast.LENGTH_LONG).show();
 		}
 	}
-	
 }
