@@ -3,6 +3,15 @@ Simple RSS Feed Reader
 
 Developed ad hoc for a job interview:
 
+Características:
+================
+
++ Muestra los elementos de un Feed RSS
++ Permite ver los últimos elementos cargados incluso si se corta la conexión
++ Permite buscar elementos por su título
++ Permite cambiar la fuente de datos RSS
+
+
 Librerías:
 ==========
 
@@ -13,6 +22,7 @@ Otras librerias serían:
 + com.github.bumptech.glide : para carga y caché de imágenes desde Internet
 + org.jsoup:jsoup : traduce etiquetas HTML a texto para poder otener información de los feeds
 + com.squareup.sqlbrite:sqlbrite y io.reactivex:rxandroid : para mayor agilidad en el acceso a una base de datos SQLite, usando RxJava
+
 
 Patrones:
 =========
