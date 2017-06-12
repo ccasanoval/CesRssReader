@@ -29,6 +29,10 @@ public class PreMain implements FetchRss.Callback
 	{
 		_vista = vista;
 	}
+	public void clear()
+	{
+		_vista = null;
+	}
 	
 	public void setFuente(String url)
 	{
@@ -72,6 +76,7 @@ public class PreMain implements FetchRss.Callback
 	@Override
 	public void onPostExecute(Boolean success, RssFeedModel feed)
 	{
+		if(_vista == null)return;
 		_vista.setRefreshing(false);
 		if(success)
 		{

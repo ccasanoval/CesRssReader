@@ -42,4 +42,12 @@ dependencies {
 
 	// HTML PARSER
 	compile 'org.jsoup:jsoup:1.10.2'
+
+    //--------- BASE DE DATOS : Rx & SQLBrite
+	//compile 'io.reactivex.rxjava:rxandroid:2.0.1'		//SQLBrite doesnt support rx2
+	//compile 'io.reactivex.rxjava:rxjava:2.0.1'
+	compile 'io.reactivex:rxjava:1.2.9'
+	compile 'io.reactivex:rxandroid:1.2.1'
+	compile 'com.squareup.sqlbrite:sqlbrite:1.1.1'
+	compile 'com.artemzin.rxjava:proguard-rules:1.2.9.0'//Proguard & RxJava!!
 }
