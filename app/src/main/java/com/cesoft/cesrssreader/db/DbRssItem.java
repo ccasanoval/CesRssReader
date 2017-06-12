@@ -9,6 +9,7 @@ import android.util.Log;
 
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
@@ -54,6 +55,7 @@ public class DbRssItem
 		{
 			int i = -1;
 			//
+			String id = cursor.getString(++i);
 			String titulo = cursor.getString(++i);
 			String descripcion = cursor.getString(++i);
 			String link = cursor.getString(++i);
@@ -68,7 +70,7 @@ public class DbRssItem
 	private static ContentValues code(RssModel o)
 	{
 		ContentValues cv = new ContentValues();
-		//cv.put(DbRssItem.ID, o.getId());
+		cv.put(DbRssItem.ID, UUID.randomUUID().toString());
 		cv.put(DbRssItem.TITULO, o.getTitulo());
 		cv.put(DbRssItem.DESCRIPCION, o.getDescripcion());
 		cv.put(DbRssItem.LINK, o.getLink());
@@ -87,7 +89,6 @@ public class DbRssItem
 				return;
 			}
 			db.delete(DbRssItem.TABLE, null);
-			
 			for(RssModel o : lista)
 			{
 				db.insert(DbRssItem.TABLE, code(o));
@@ -99,10 +100,10 @@ public class DbRssItem
 		}
 	}
 	//----------------------------------------------------------------------------------------------
-	public static void delete(BriteDatabase db, RssModel o)
+	/*public static void delete(BriteDatabase db, RssModel o)
 	{
 		db.delete(TABLE, TITULO+" LIKE ?", o.getTitulo());
-	}
+	}*/
 
 
 	//----------------------------------------------------------------------------------------------
@@ -112,7 +113,7 @@ public class DbRssItem
 		void onDatos(List<T> lista);
 	}
 	//----------------------------------------------------------------------------------------------
-	public static void getListaSync(BriteDatabase db, final Listener<RssModel> listener)
+	/*public static void getListaSync(BriteDatabase db, final Listener<RssModel> listener)
 	{
 		String LISTA2 = QUERY+" order by "+FECHA+" desc";
 
@@ -136,7 +137,7 @@ public class DbRssItem
 					listener.onDatos(l);
 				}
 			});
-	}
+	}*/
 
 	public static Subscription getLista(BriteDatabase db, final Listener<RssModel> listener)
 	{
