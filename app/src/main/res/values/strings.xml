@@ -1,9 +1,13 @@
 <resources>
-	<string name="app_name">CES Rss Feed Reader</string>
+	<string name="app_name" translatable="false">CES Rss Feed Reader</string>
+
 	<string name="action_settings">Configuración</string>
 	<string name="ver_en_el_navegador">Ver en el navegador</string>
 	<string name="buscar">Buscar:</string>
 	<string name="buscar_hint">Título del feed:</string>
 
 	<string name="img_hint">Imagen del RSS</string>
+	<string name="introduce_url">Introduce la URL…</string>
+	<string name="leer">Leer</string>
+	<string name="url_incorrecta">La URL introducida es incorrecta...</string>
 </resources>

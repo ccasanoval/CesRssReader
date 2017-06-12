@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.cesoft.cesrssreader.model.RssModel;
 import com.cesoft.cesrssreader.model.RssParcelable;
+import com.cesoft.cesrssreader.view.ActDetail;
 
 import org.jsoup.Jsoup;
 
@@ -26,10 +27,10 @@ public class RssListAdapter extends RecyclerView.Adapter<RssListAdapter.RssModel
 	private List<RssModel> _RssModels;
 
 	////////////////////////////////////////////////////////////////////////////////////////////////
-	public static class RssModelViewHolder extends RecyclerView.ViewHolder
+	static class RssModelViewHolder extends RecyclerView.ViewHolder
 	{
 	    private View rssFeedView;
-	    public RssModelViewHolder(View v)
+	    RssModelViewHolder(View v)
 	    {
 	        super(v);
 	        rssFeedView = v;
@@ -87,7 +88,7 @@ public class RssListAdapter extends RecyclerView.Adapter<RssListAdapter.RssModel
 			@Override
 			public void onClick(View view)
 			{
-				Intent intent= new Intent(_context, ActDetail.class);
+				Intent intent = new Intent(_context, ActDetail.class);
 				intent.putExtra(RssModel.class.getSimpleName(), new RssParcelable(rssModel));
 				_context.startActivity(intent);
 			}

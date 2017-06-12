@@ -5,14 +5,16 @@
 	<uses-permission android:name="android.permission.INTERNET"/>
 
 	<application
+		android:name=".App"
 		android:allowBackup="true"
 		android:icon="@mipmap/ic_launcher"
 		android:label="@string/app_name"
 		android:roundIcon="@mipmap/ic_launcher_round"
 		android:supportsRtl="true"
 		android:theme="@style/AppTheme">
+
 		<activity
-			android:name=".ActMain"
+			android:name=".view.ActMain"
 			android:label="@string/app_name"
 			android:launchMode="singleTop"
 			android:theme="@style/AppTheme.NoActionBar">
@@ -25,8 +27,11 @@
 				android:name="android.app.searchable"
 				android:resource="@xml/searchable"/>
 		</activity>
-		<activity android:name=".ActDetail">
-		</activity>
+
+		<activity android:name=".view.ActDetail" />
+
+		<activity android:name=".view.ActSource" android:theme="@style/Theme.Ces" />
+
 	</application>
 
 </manifest>

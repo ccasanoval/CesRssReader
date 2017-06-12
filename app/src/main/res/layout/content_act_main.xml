@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:showIn="@layout/act_main"
-    tools:context="com.cesoft.cesrssreader.ActMain">
+    tools:context="com.cesoft.cesrssreader.view.ActMain">
 
 
 	<android.support.v4.widget.SwipeRefreshLayout

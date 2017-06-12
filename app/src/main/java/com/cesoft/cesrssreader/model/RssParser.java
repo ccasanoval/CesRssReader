@@ -24,7 +24,7 @@ public class RssParser
 {
 	private static final String TAG = RssParser.class.getSimpleName();
 	
-	public static Date str2date(String str)
+	private static Date str2date(String str)
 	{
 		if(str == null)return null;
 		try

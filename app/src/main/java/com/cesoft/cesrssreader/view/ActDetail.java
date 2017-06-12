@@ -1,4 +1,4 @@
-package com.cesoft.cesrssreader;
+package com.cesoft.cesrssreader.view;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -13,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.cesoft.cesrssreader.R;
 import com.cesoft.cesrssreader.model.RssModel;
 import com.cesoft.cesrssreader.model.RssParcelable;
 

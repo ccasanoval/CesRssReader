@@ -1,4 +1,4 @@
-package com.cesoft.cesrssreader;
+package com.cesoft.cesrssreader.view;
 
 import android.app.SearchManager;
 import android.content.Context;
@@ -15,7 +15,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.cesoft.cesrssreader.App;
+import com.cesoft.cesrssreader.R;
+import com.cesoft.cesrssreader.RssListAdapter;
 import com.cesoft.cesrssreader.model.RssModel;
+import com.cesoft.cesrssreader.model.RssSource;
 import com.cesoft.cesrssreader.net.FetchRss;
 
 import java.util.ArrayList;
@@ -26,9 +30,8 @@ import java.util.List;
 public class ActMain extends AppCompatActivity implements FetchRss.Callback
 {
 	private static final String TAG = "ActMAin";
-	private static final String _url = "http://www.xatakandroid.com/tag/feeds/rss2.xml";
-	//private static final String _url = "https://www.nasa.gov/rss/dyn/breaking_news.rss";
 
+	private App _app;
 	private RecyclerView _lista;
 	private SwipeRefreshLayout _SwipeLayout;
 
@@ -40,6 +43,8 @@ public class ActMain extends AppCompatActivity implements FetchRss.Callback
 		setContentView(R.layout.act_main);
 		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
+		
+		_app = (App)getApplication();
 
 		/*TODO: move to unit test
 		Log.e(TAG, "ooooooooooooooooo"+ RssParser.str2date("Wed, 07 Jun 2017 16:00 EDT"));
@@ -72,10 +77,10 @@ public class ActMain extends AppCompatActivity implements FetchRss.Callback
 			@Override
 			public void onRefresh()
 			{
-				new FetchRss(ActMain.this).execute(_url);
+				new FetchRss(ActMain.this).execute(_app.getRssSource().getUrl());
 			}
 		});
-		new FetchRss(ActMain.this).execute(_url);
+		new FetchRss(ActMain.this).execute(_app.getRssSource().getUrl());
 		handleIntent(getIntent());
 	}
 	//----------------------------------------------------------------------------------------------
@@ -122,11 +127,32 @@ public class ActMain extends AppCompatActivity implements FetchRss.Callback
 		//noinspection SimplifiableIfStatement
 		if(id == R.id.configuracion)
 		{
+			Intent intent = new Intent(this, ActSource.class);
+			startActivityForResult(intent, ActSource.ID);
+			//startActivity(intent);
 			return true;
 		}
 
 		return super.onOptionsItemSelected(item);
 	}
+	// Activity Result from ActSource
+	protected void onActivityResult(int requestCode, int resultCode, Intent data)
+	{
+		switch(requestCode)
+		{
+		case ActSource.ID:
+			if(resultCode == RESULT_OK)
+			{
+				String url = data.getStringExtra(ActSource.SOURCE_URL);
+				if(url != null && url.length() > 0)
+				{
+					_app.setRssSource(new RssSource(url, "", ""));
+					new FetchRss(ActMain.this).execute(url);
+				}
+			}
+			break;
+		}
+}
 	
 	///////////////// FetchRss.Callback
 	//
