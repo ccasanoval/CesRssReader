@@ -14,8 +14,8 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.cesoft.cesrssreader.R;
-import com.cesoft.cesrssreader.model.RssModel;
-import com.cesoft.cesrssreader.model.RssParcelable;
+import com.cesoft.cesrssreader.model.RssItemModel;
+import com.cesoft.cesrssreader.model.RssItemParcelable;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Created by Cesar Casanova on 11/06/2017.
@@ -45,7 +45,7 @@ public class ActDetail extends AppCompatActivity
 		
 		try
 		{
-			final RssParcelable data = getIntent().getParcelableExtra(RssModel.class.getSimpleName());
+			final RssItemParcelable data = getIntent().getParcelableExtra(RssItemModel.class.getSimpleName());
 			if(data == null)
 			{
 				Log.e(TAG, "onCreate:e:--------------------------------- sin datos del feed");

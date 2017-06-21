@@ -7,16 +7,16 @@ import java.util.Date;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Created by Cesar Casanova on 11/06/2017.
-public class RssParcelable implements Parcelable
+public class RssItemParcelable implements Parcelable
 {
-	private RssModel _data;
+	private RssItemModel _data;
 	
-	public RssParcelable(RssModel data){_data=data;}
-	public RssModel getRssModel(){return _data;}
+	public RssItemParcelable(RssItemModel data){_data=data;}
+	public RssItemModel getRssModel(){return _data;}
 
-	private RssParcelable(Parcel in)
+	private RssItemParcelable(Parcel in)
 	{
-		_data = new RssModel(in.readString(), in.readString(), in.readString(), in.readString(), new Date(in.readLong()));
+		_data = new RssItemModel(in.readString(), in.readString(), in.readString(), in.readString(), new Date(in.readLong()));
 		/*_data.setTitulo(in.readString());
 		_data.setDescripcion(in.readString());
 		_data.setLink(in.readString());
@@ -38,17 +38,17 @@ public class RssParcelable implements Parcelable
 		return 0;
 	}
 	
-	public static final Parcelable.Creator<RssParcelable> CREATOR = new Parcelable.Creator<RssParcelable>()
+	public static final Parcelable.Creator<RssItemParcelable> CREATOR = new Parcelable.Creator<RssItemParcelable>()
 	{
 		@Override
-		public RssParcelable createFromParcel(Parcel in)
+		public RssItemParcelable createFromParcel(Parcel in)
 		{
-			return new RssParcelable(in);
+			return new RssItemParcelable(in);
 		}
 		@Override
-		public RssParcelable[] newArray(int size)
+		public RssItemParcelable[] newArray(int size)
 		{
-			return new RssParcelable[size];
+			return new RssItemParcelable[size];
 		}
 	};
 }

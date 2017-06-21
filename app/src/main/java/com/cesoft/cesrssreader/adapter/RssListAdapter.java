@@ -10,9 +10,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
 import com.cesoft.cesrssreader.R;
-import com.cesoft.cesrssreader.model.RssModel;
-import com.cesoft.cesrssreader.model.RssParcelable;
+import com.cesoft.cesrssreader.model.RssItemModel;
+import com.cesoft.cesrssreader.model.RssItemParcelable;
 import com.cesoft.cesrssreader.view.ActDetail;
 
 import org.jsoup.Jsoup;
@@ -24,7 +26,7 @@ import java.util.List;
 public class RssListAdapter extends RecyclerView.Adapter<RssListAdapter.RssModelViewHolder>
 {
 	private Context _context;
-	private List<RssModel> _RssModels;
+	private List<RssItemModel> _RssItemModels;
 
 	////////////////////////////////////////////////////////////////////////////////////////////////
 	static class RssModelViewHolder extends RecyclerView.ViewHolder
@@ -37,10 +39,10 @@ public class RssListAdapter extends RecyclerView.Adapter<RssListAdapter.RssModel
 	    }
 	}
 
-	public RssListAdapter(Context context, List<RssModel> rssModels)
+	public RssListAdapter(Context context, List<RssItemModel> rssItemModels)
 	{
 		_context = context;
-	    _RssModels = rssModels;
+	    _RssItemModels = rssItemModels;
 	}
 
 	@Override
@@ -54,18 +56,24 @@ public class RssListAdapter extends RecyclerView.Adapter<RssListAdapter.RssModel
 	@Override
 	public void onBindViewHolder(RssModelViewHolder holder, int position)
 	{
-	    final RssModel rssModel = _RssModels.get(position);
+	    final RssItemModel rssItemModel = _RssItemModels.get(position);
 
 		//-------------------
 		// Iniciamos campos del elemento Rss
-	    ((TextView)holder.rssFeedView.findViewById(R.id.txtTitulo)).setText(rssModel.getTitulo());
-	    ((TextView)holder.rssFeedView.findViewById(R.id.txtDescripcion)).setText(Jsoup.parse(rssModel.getDescripcion()).text());
-		//((WebView)holder.rssFeedView.findViewById(R.id.txtDescripcion)).loadData(rssModel.getDescripcion(), "text/html; charset=utf-8", "utf-8");
+	    ((TextView)holder.rssFeedView.findViewById(R.id.txtTitulo)).setText(rssItemModel.getTitulo());
+	    ((TextView)holder.rssFeedView.findViewById(R.id.txtDescripcion)).setText(Jsoup.parse(rssItemModel.getDescripcion()).text());
+		//((WebView)holder.rssFeedView.findViewById(R.id.txtDescripcion)).loadData(rssItemModel.getDescripcion(), "text/html; charset=utf-8", "utf-8");
 		// Cargo imagen desde URL con Glide
-		if(rssModel.getImg() != null)
+		if(rssItemModel.getImg() != null)
 		{
-			Glide.with(_context)
-	            .load(rssModel.getImg())
+			Glide
+				.with(_context)
+	            .load(rssItemModel.getImg())
+				.apply(RequestOptions
+					.diskCacheStrategyOf(DiskCacheStrategy.ALL)
+					//.decode(RawDataDecoder.class)
+					.dontAnimate()
+					.dontTransform())
 	            .into(((ImageView)holder.rssFeedView.findViewById(R.id.img)));
 		}
 		
@@ -77,7 +85,7 @@ public class RssListAdapter extends RecyclerView.Adapter<RssListAdapter.RssModel
 				@Override
 				public void onClick(View view)
 				{
-					Intent intent= new Intent(Intent.ACTION_VIEW, Uri.parse(rssModel.getLink()));
+					Intent intent= new Intent(Intent.ACTION_VIEW, Uri.parse(rssItemModel.getLink()));
 					_context.startActivity(intent);
 				}
 			});*/
@@ -89,7 +97,7 @@ public class RssListAdapter extends RecyclerView.Adapter<RssListAdapter.RssModel
 			public void onClick(View view)
 			{
 				Intent intent = new Intent(_context, ActDetail.class);
-				intent.putExtra(RssModel.class.getSimpleName(), new RssParcelable(rssModel));
+				intent.putExtra(RssItemModel.class.getSimpleName(), new RssItemParcelable(rssItemModel));
 				_context.startActivity(intent);
 			}
 		};
@@ -102,6 +110,6 @@ public class RssListAdapter extends RecyclerView.Adapter<RssListAdapter.RssModel
 	@Override
 	public int getItemCount()
 	{
-	    return _RssModels.size();
+	    return _RssItemModels.size();
 	}
 }

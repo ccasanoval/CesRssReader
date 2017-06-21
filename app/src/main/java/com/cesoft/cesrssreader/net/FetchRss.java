@@ -1,5 +1,5 @@
 package com.cesoft.cesrssreader.net;
-
+/*
 import android.os.AsyncTask;
 import android.text.TextUtils;
 import android.util.Log;
@@ -8,14 +8,13 @@ import com.cesoft.cesrssreader.model.RssFeedModel;
 import com.cesoft.cesrssreader.model.RssParser;
 
 import java.io.InputStream;
-import java.net.URL;
+import java.net.URL;*/
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Created by Cesar Casanova on 11/06/2017.
-//TODO: RxJava
-public class FetchRss extends AsyncTask<String, Void, Boolean>
+public class FetchRss //extends AsyncTask<String, Void, Boolean>
 {
-	private static final String TAG = FetchRss.class.getSimpleName();
+	/*private static final String TAG = FetchRss.class.getSimpleName();
 	
 	private Callback _cb = null;
 	private RssFeedModel _Feed = null;
@@ -56,7 +55,7 @@ public class FetchRss extends AsyncTask<String, Void, Boolean>
 			URL url = new URL(_sURL);
 			inputStream = url.openConnection().getInputStream();
 			_Feed = RssParser.parseFeed(inputStream);
-			_Feed.getFuente().setUrl(_sURL);
+			_Feed.getFuente().setLink(_sURL);
 			return true;
 		}
 		catch(Exception e)
@@ -75,5 +74,5 @@ public class FetchRss extends AsyncTask<String, Void, Boolean>
 	protected void onPostExecute(Boolean success)
 	{
 		_cb.onPostExecute(success, _Feed);
-	}
+	}*/
 }

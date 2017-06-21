@@ -1,7 +1,9 @@
 package com.cesoft.cesrssreader.model;
-
+/*
 import android.util.Log;
 import android.util.Xml;
+
+import com.cesoft.cesrssreader.Util;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -11,36 +13,16 @@ import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
-import java.util.Locale;
+import java.util.Date;*/
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Created by Cesar Casanova on 11/06/2017.
 public class RssParser
 {
-	private static final String TAG = RssParser.class.getSimpleName();
-	
-	//----------------------------------------------------------------------------------------------
-	private static Date str2date(String str)
-	{
-		if(str == null)return null;
-		try
-		{
-			//SimpleDateFormat format = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm zzz");//Wed, 07 Jun 2017 16:00 EDT
-			SimpleDateFormat format = new SimpleDateFormat("dd MMM yyyy HH:mm", Locale.US);
-			return format.parse(str.substring(5, 22));
-		}
-		catch(ParseException e)
-		{
-			Log.e(TAG, "str2date:e: "+str, e);
-			return null;
-		}
-	}
+	/*private static final String TAG = RssParser.class.getSimpleName();
 	
 	//----------------------------------------------------------------------------------------------
 	// Parsea el inputStream desde la red o archivo a una lista de RssFeeds
@@ -54,7 +36,7 @@ public class RssParser
 		//
 		boolean isItem = false;
 		boolean isHead = true;
-		ArrayList<RssModel> items = new ArrayList<>();
+		ArrayList<RssItemModel> items = new ArrayList<>();
 		RssFeedModel feed = new RssFeedModel(null);
 		feed.setEntradas(items);
 		
@@ -100,7 +82,7 @@ public class RssParser
 				{
 					//if(name.equalsIgnoreCase("item")) isItem = false;
 					//Log.e(TAG, "NEW ITEM------------------------"+title+" -"+img+"- "+link);
-					RssModel item = new RssModel(title, description, link, img, fecha);
+					RssItemModel item = new RssItemModel(title, description, link, img, fecha);
 					items.add(item);
 					
 					title = null;
@@ -122,7 +104,7 @@ public class RssParser
 				if(name.equalsIgnoreCase("title")) title = result;
 				else if(name.equalsIgnoreCase("description")) description = result;
 				else if(name.equalsIgnoreCase("link")) link = result;
-				else if(name.equalsIgnoreCase("pubdate")) fecha = str2date(result);//Wed, 07 Jun 2017 16:00 EDT
+				else if(name.equalsIgnoreCase("pubdate")) fecha = Util.str2date(result);//Wed, 07 Jun 2017 16:00 EDT
 				
 				if(img == null)
 				{
@@ -149,9 +131,9 @@ public class RssParser
 		    /// Ordenar los elementos por fecha
 			try
 			{
-				Collections.sort(items, new Comparator<RssModel>()
+				Collections.sort(items, new Comparator<RssItemModel>()
 				{
-					public int compare(RssModel o1, RssModel o2)
+					public int compare(RssItemModel o1, RssItemModel o2)
 					{
 						if(o1.getFecha() == null || o2.getFecha() == null) return 0;
 						return o2.getFecha().compareTo(o1.getFecha());
@@ -170,10 +152,10 @@ public class RssParser
     
     //----------------------------------------------------------------------------------------------
 	// Parsea el inputStream desde la red o archivo a un RssFeed que representa los datos de cabecera del Feed
-	/*public static RssModel parseFeedHeader(InputStream inputStream) throws XmlPullParserException, IOException
+	/*public static RssItemModel parseFeedHeader(InputStream inputStream) throws XmlPullParserException, IOException
 	{
 		boolean isItem = false;
-		RssModel item = new RssModel("", "", "", "", new Date());
+		RssItemModel item = new RssItemModel("", "", "", "", new Date());
 	Log.e(TAG, "HEADER------------------------aaaaaaaaaaaaa");
 
 		/// Traducir las etiquetas del XML para obtener los campos a usar
@@ -206,7 +188,7 @@ public class RssParser
 						break;
 					}
 					//else if(name.equalsIgnoreCase("description")) descriptionRSS = xmlPullParser.getText();
-					//if(titleRSS != null && descriptionRSS != null)return new RssModel(titleRSS, descriptionRSS, "", "", new Date());
+					//if(titleRSS != null && descriptionRSS != null)return new RssItemModel(titleRSS, descriptionRSS, "", "", new Date());
 				}
 		    }
 		    return item;

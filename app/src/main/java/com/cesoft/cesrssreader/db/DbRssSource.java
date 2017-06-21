@@ -1,11 +1,11 @@
 package com.cesoft.cesrssreader.db;
 
-import com.cesoft.cesrssreader.model.RssItemModel;
-import com.squareup.sqlbrite.BriteDatabase;
-
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.util.Log;
+
+import com.cesoft.cesrssreader.model.RssSourceModel;
+import com.squareup.sqlbrite.BriteDatabase;
 
 import java.util.Date;
 import java.util.List;
@@ -18,94 +18,88 @@ import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-public class DbRssItem
+public class DbRssSource
 {
-	private static final String TAG = DbRssItem.class.getSimpleName();
+	private static final String TAG = DbRssSource.class.getSimpleName();
 
 	private static final String ID = "_id";
-	//private static final String ID_FEED = "_id_feed";
 	private static final String TITULO = "titulo";
 	private static final String DESCRIPCION = "descripcion";
 	private static final String LINK = "link";
 	private static final String IMG = "img";
 	private static final String FECHA = "fecha";
 
-	private static final String TABLE = "rssitem";
-	/*private static final String QUERY =
-			"SELECT "
-				+DbRssItem.TABLE+".*, "
-				//+DbRssItem.TABLE+".*, "
-				+" FROM "+DbRssItem.TABLE
-				+" LEFT OUTER JOIN "+DbRssSource.TABLE+" ON "+DbRssSource.TABLE+"."+ID+" = "+DbRssItem.TABLE+"."+DbRssItem.ID
-				;*/
+	private static final String TABLE = "rsssource";
 	private static final String QUERY =
-			"SELECT * FROM "+DbRssItem.TABLE;
+			"SELECT * "
+				//+DbRssItem.TABLE+".*, "
+				+" FROM "+ DbRssSource.TABLE
+				//+" LEFT OUTER JOIN "+DbRssItem.TABLE+" ON "+DbObjeto.TABLE+"."+ID+" = "+DbAvisoTem.TABLE+"."+DbAvisoTem.ID
+				;
 
 	//CREATE TABLE IF NOT EXISTS
 	static final String SQL_CREATE_TABLE =
 			"CREATE TABLE "+ TABLE+" ( "
-					+ DbRssItem.ID			+ " TEXT   NOT NULL   PRIMARY KEY,"
-					+ DbRssItem.TITULO		+ " TEXT,"
-					+ DbRssItem.DESCRIPCION	+ " TEXT,"
-					+ DbRssItem.LINK	    + " TEXT,"
-					+ DbRssItem.IMG	        + " TEXT,"
-					+ DbRssItem.FECHA	    + " INTEGER"
-					//+ DbRssItem.ID_FEED 	+ ", TEXT   REFERENCES "+DbRssSource.TABLE+" ("+DbRssSource.ID+") "
+					+ DbRssSource.ID			+ " TEXT   NOT NULL   PRIMARY KEY,"
+					+ DbRssSource.TITULO		+ " TEXT,"
+					+ DbRssSource.DESCRIPCION	+ " TEXT,"
+					+ DbRssSource.LINK          + " TEXT,"
+					+ DbRssSource.IMG			+ " TEXT,"
+					+ DbRssSource.FECHA			+ " INTEGER"
 					+" )";
-	static final String SQL_CREATE_INDEX = "CREATE UNIQUE INDEX idx_id_"+TABLE+" ON "+TABLE+" ("+ID+")";
-	//static final String SQL_CREATE_INDEX2 = "CREATE        INDEX idx2_id_"+TABLE+" ON "+TABLE+" ("+ID_FEED+")";
+	static final String SQL_CREATE_INDEX = "CREATE UNIQUE INDEX idx_id_"+TABLE+" ON "+DbRssSource.TABLE+" ("+DbRssSource.ID+")";
 
 	//----------------------------------------------------------------------------------------------
-	private static Func1<Cursor, RssItemModel> MAPPER = new Func1<Cursor, RssItemModel>()
+	private static Func1<Cursor, RssSourceModel> MAPPER = new Func1<Cursor, RssSourceModel>()
 	{
-		@Override public RssItemModel call(final Cursor cursor)
+		@Override public RssSourceModel call(final Cursor cursor)
 		{
 			int i = -1;
 			//
-			cursor.getString(++i);//id
-			//cursor.getString(++i);//id_feed
+			String id = cursor.getString(++i);
 			String titulo = cursor.getString(++i);
 			String descripcion = cursor.getString(++i);
 			String link = cursor.getString(++i);
 			String img = cursor.getString(++i);
 			Date fecha = new Date(cursor.getLong(++i));
 			//
-			return new RssItemModel(titulo, descripcion, link, img, fecha);
+			return new RssSourceModel(id, titulo, descripcion, link, img, fecha);
 		}
 	};
 
 	//----------------------------------------------------------------------------------------------
-	private static ContentValues code(RssItemModel o)//, String id_feed)
+	private static ContentValues code(RssSourceModel o)
 	{
 		ContentValues cv = new ContentValues();
-		cv.put(DbRssItem.ID, UUID.randomUUID().toString());
-		//cv.put(DbRssItem.ID_FEED, id_feed);
-		cv.put(DbRssItem.TITULO, o.getTitulo());
-		cv.put(DbRssItem.DESCRIPCION, o.getDescripcion());
-		cv.put(DbRssItem.LINK, o.getLink());
-		cv.put(DbRssItem.IMG, o.getImg());
-		cv.put(DbRssItem.FECHA, o.getFecha().getTime());
+		o.setId(UUID.randomUUID().toString());
+		cv.put(DbRssSource.ID, o.getId());
+		cv.put(DbRssSource.TITULO, o.getTitulo());
+		cv.put(DbRssSource.DESCRIPCION, o.getDescripcion());
+		cv.put(DbRssSource.LINK, o.getLink());
+		cv.put(DbRssSource.IMG, o.getImg());
+		cv.put(DbRssSource.FECHA, o.getFecha()==null?0:o.getFecha().getTime());
 		return cv;
 	}
 	//______________________________________________________________________________________________
-	public static void saveAll(BriteDatabase db, List<RssItemModel> lista)//, String id_feed)
+	public static long save(BriteDatabase db, RssSourceModel rssSourceModel)
 	{
 		try
 		{
 			if(db == null)
 			{
 				Log.e(TAG, "saveAll:e:------------------------------------------------------------------ DB == NULL");
-				return;
+				return -1;
 			}
-			db.delete(DbRssItem.TABLE, null);
-			for(RssItemModel o : lista)
-			{
-				db.insert(DbRssItem.TABLE, code(o));//, id_feed));
-			}
+			//db.delete(DbRssSource.TABLE, null);//TODO: opcion de borrar...
+
+			db.delete(TABLE, " link like ?", rssSourceModel.getLink());
+
+			return db.insert(TABLE, code(rssSourceModel));
 		}
 		catch(Exception e)
 		{
 			Log.e(TAG, "saveAll:e:------------------------------------------------------------------", e);
+			return -1;
 		}
 	}
 	//----------------------------------------------------------------------------------------------
@@ -148,10 +142,10 @@ public class DbRssItem
 			});
 	}*/
 
-	public static Subscription getLista(BriteDatabase db, final Listener<RssItemModel> listener)
+	public static Subscription getLista(BriteDatabase db, final Listener<RssSourceModel> listener)
 	{
-		return db.createQuery(DbRssItem.TABLE, DbRssItem.QUERY)
-				.mapToList(DbRssItem.MAPPER)
+		return db.createQuery(DbRssSource.TABLE, DbRssSource.QUERY)
+				.mapToList(DbRssSource.MAPPER)
 				.observeOn(AndroidSchedulers.mainThread())
 				.subscribeOn(Schedulers.io())
 				.doOnError(new Action1<Throwable>()
@@ -162,10 +156,10 @@ public class DbRssItem
 						listener.onError(err);
 					}
 				})
-				.subscribe(new Action1<List<RssItemModel>>()
+				.subscribe(new Action1<List<RssSourceModel>>()
 				{
 					@Override
-					public void call(List<RssItemModel> lista)
+					public void call(List<RssSourceModel> lista)
 					{
 						listener.onDatos(lista);
 					}

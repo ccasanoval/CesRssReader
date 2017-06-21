@@ -9,16 +9,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.cesoft.cesrssreader.App;
 import com.cesoft.cesrssreader.R;
 import com.cesoft.cesrssreader.adapter.RssListAdapter;
-import com.cesoft.cesrssreader.model.RssModel;
+import com.cesoft.cesrssreader.model.RssItemModel;
 import com.cesoft.cesrssreader.presenter.PreMain;
 
 import java.util.List;
@@ -27,7 +27,7 @@ import java.util.List;
 // Created by Cesar Casanova on 10/06/2017.
 public class ActMain extends AppCompatActivity implements PreMain.IntVista
 {
-	//private static final String TAG = "ActMAin";
+	private static final String TAG = "ActMAin";
 
 	private PreMain _presenter = new PreMain();
 	
@@ -49,7 +49,7 @@ public class ActMain extends AppCompatActivity implements PreMain.IntVista
 
 		_lista = (RecyclerView)findViewById(R.id.rss_list);
 		_lista.setLayoutManager(new LinearLayoutManager(this));
-		//_lista.setAdapter(new RssListAdapter(this, new ArrayList<RssModel>()));
+		//_lista.setAdapter(new RssListAdapter(this, new ArrayList<RssItemModel>()));
 
 		_SwipeLayout = (SwipeRefreshLayout)findViewById(R.id.swipeRefreshLayout);
 		_SwipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener()
@@ -57,6 +57,7 @@ public class ActMain extends AppCompatActivity implements PreMain.IntVista
 			@Override
 			public void onRefresh()
 			{
+				Log.e(TAG, "REFRESH:----------------------------------------------------------------");
 				_presenter.cargarDatos();
 			}
 		});
@@ -81,11 +82,19 @@ public class ActMain extends AppCompatActivity implements PreMain.IntVista
 		}
 	}*/
 	@Override
+	public void onStart()
+	{
+		super.onStart();
+		_presenter.setVista(this);
+		_presenter.cargarDatos();
+	}
+	@Override
 	public void onResume()
 	{
 		super.onResume();
 		_presenter.setVista(this);
-		_presenter.cargarDatos();
+		_presenter.onStart();
+		Log.e(TAG, "RESUME:----------------------------------------------------------------");
 		//com.google.firebase.crash.FirebaseCrash.report(new Exception("Crash reporting test"));
 	}
 	//----------------------------------------------------------------------------------------------
@@ -117,7 +126,7 @@ public class ActMain extends AppCompatActivity implements PreMain.IntVista
 					//Log.e(TAG, "-------------- SEARCH ----------------"+query);
 					if( ! query.isEmpty())
 					{
-						_lista.setAdapter(new RssListAdapter(ActMain.this, _presenter.getDatosFiltrados(query)));
+						_lista.setAdapter(new RssListAdapter(ActMain.this, _presenter.getDataFiltered(query)));
 					}
 					return true;
 				}
@@ -125,7 +134,7 @@ public class ActMain extends AppCompatActivity implements PreMain.IntVista
 				public boolean onQueryTextChange(String newText)
 				{
 					if(newText.isEmpty())//Cancelar busqueda
-						_lista.setAdapter(new RssListAdapter(ActMain.this, _presenter.getDatos()));
+						_lista.setAdapter(new RssListAdapter(ActMain.this, _presenter.getData()));
 					return true;
 				}
 			});
@@ -175,7 +184,7 @@ public class ActMain extends AppCompatActivity implements PreMain.IntVista
 		_SwipeLayout.setRefreshing(b);
 	}
 	@Override
-	public void showEntradas(List<RssModel> items)
+	public void showEntradas(List<RssItemModel> items)
 	{
 		_lista.setAdapter(new RssListAdapter(this, items));
 	}
