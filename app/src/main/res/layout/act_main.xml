@@ -20,7 +20,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/toolbar_layout"
-        android:text="...................."
+        android:text="@string/sin_rss_feed"
         android:textSize="22sp"
         android:textColor="@color/colorPrimaryDark"
         android:layout_marginStart="8dp"

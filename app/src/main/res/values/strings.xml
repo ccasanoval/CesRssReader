@@ -15,4 +15,5 @@
 	<string name="elementos_cache">Elementos en caché</string>
 
 	<string name="escoge_feed">Escoge un feed</string>
+    <string name="sin_rss_feed">Sin feed RSS</string>
 </resources>

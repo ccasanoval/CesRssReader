@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">CES Rss Feed Reader</string>
+    <string name="action_settings">Settings</string>
+    <string name="buscar">Search:</string>
+    <string name="buscar_hint">Feed title:</string>
+    <string name="elementos_cache">Cached items</string>
+    <string name="error_load_rss_db">Error while loading cached items</string>
+    <string name="error_load_rss_net">Error while loading from RSS channel</string>
+    <string name="escoge_feed">Choose a feed</string>
+    <string name="img_hint">RSS image</string>
+    <string name="introduce_url">Enter the URL...</string>
+    <string name="leer">Read</string>
+    <string name="sin_rss_feed">No RSS feed</string>
+    <string name="url_incorrecta">That URL is wrong</string>
+    <string name="ver_en_el_navegador">Read it in the browser</string>
+</resources>
