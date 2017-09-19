@@ -96,6 +96,11 @@ public class ActMain extends AppCompatActivity implements PreMain.IntVista
 		_presenter.onStart();
 		Log.e(TAG, "RESUME:----------------------------------------------------------------");
 		//com.google.firebase.crash.FirebaseCrash.report(new Exception("Crash reporting test"));
+
+		/*int h = getWindow().getDecorView().getHeight();//=>0
+		h = this.getWindow().getDecorView().getBottom();
+		Log.e(TAG, "onResume:------------------HEIGHT:"+h);
+		findViewById(R.id.swipeRefreshLayout).setMinimumHeight(h);*/
 	}
 	//----------------------------------------------------------------------------------------------
 	@Override public void onStop()
