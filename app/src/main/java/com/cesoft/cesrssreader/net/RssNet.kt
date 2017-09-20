@@ -4,6 +4,9 @@ import com.cesoft.cesrssreader.Util
 import com.cesoft.cesrssreader.model.RssFeedModel
 import com.cesoft.cesrssreader.model.RssItemModel
 import com.cesoft.cesrssreader.model.RssSourceModel
+import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 
 import org.xml.sax.Attributes
 import org.xml.sax.SAXException
@@ -13,9 +16,6 @@ import java.util.ArrayList
 
 import javax.xml.parsers.SAXParserFactory
 
-import rx.Observable
-import rx.android.schedulers.AndroidSchedulers
-import rx.schedulers.Schedulers
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -49,12 +49,13 @@ class RssNet
 				.subscribeOn(Schedulers.newThread())
 				.observeOn(AndroidSchedulers.mainThread())
 				.subscribe(
-						{ items ->
-							cb.onData(items[0])
+						{
+							items : List<RssFeedModel> -> cb.onData(items[0])
 						},
-						{ e ->
-							cb.onError(e)
-							Util.log("App", "Failed to download RSS Items:" + e)
+						{
+							e : Throwable ->
+								cb.onError(e)
+								Util.log("App", "Failed to download RSS Items:" + e)
 						})
 		}
 
@@ -74,7 +75,7 @@ class RssNet
 					val list = ArrayList<RssFeedModel>()
 					list.add(rssFeed)
 					subscriber.onNext(list)
-					subscriber.onCompleted()
+					subscriber.onComplete()// .onCompleted()
 				}
 				catch(e: Exception)
 				{

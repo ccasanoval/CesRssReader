@@ -48,7 +48,8 @@ class ActSource : AppCompatActivity()
 	private fun iniListaFeeds(lv: ListView)
 	{
 		val db = DbOpenHelper.db
-		DbRssSource.getLista(db, object : DbRssSource.Listener<RssSourceModel> {
+		DbRssSource.getLista(db, object : DbRssSource.Listener<RssSourceModel>
+		{
 			override fun onError(e: Throwable)
 			{
 				Util.log(TAG, "getDbData:DbRssSource:e:------------------------------------------------", e)

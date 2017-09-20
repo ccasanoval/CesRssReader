@@ -104,9 +104,9 @@ class PreMain
 		val db = DbOpenHelper.db
 		DbRssItem.getLista(db, object : DbRssItem.Listener<RssItemModel>
 		{
-			override fun onError(e: Throwable)
+			override fun onError(t: Throwable)
 			{
-				Util.log(TAG, "getDbData:DbRssItem:e:--------------------------------------------------", e)
+				Util.log(TAG, "getDbData:DbRssItem:e:--------------------------------------------------", t)
 				vista!!.showError(R.string.error_load_rss_db)
 			}
 			override fun onDatos(lista: List<RssItemModel>)

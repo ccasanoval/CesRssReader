@@ -1,22 +1,23 @@
 package com.cesoft.cesrssreader.db
 
 import com.cesoft.cesrssreader.model.RssItemModel
-import com.squareup.sqlbrite.BriteDatabase
+import com.squareup.sqlbrite2.BriteDatabase
 
 import android.content.ContentValues
 import android.database.Cursor
 import android.util.Log
+import io.reactivex.android.schedulers.AndroidSchedulers
 
 import java.util.Date
 import java.util.UUID
 
-import rx.Subscription
-import rx.android.schedulers.AndroidSchedulers
-import rx.functions.Func1
-import rx.schedulers.Schedulers
+import io.reactivex.functions.Function
+import io.reactivex.schedulers.Schedulers
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-object DbRssItem {
+object DbRssItem
+{
 	private val TAG = DbRssItem::class.java.simpleName
 
 	private val ID = "_id"
@@ -43,7 +44,7 @@ object DbRssItem {
 	internal val SQL_CREATE_INDEX = "CREATE UNIQUE INDEX idx_id_$TABLE ON $TABLE ($ID)"
 
 	//----------------------------------------------------------------------------------------------
-	private val MAPPER = Func1<Cursor, RssItemModel> { cursor ->
+	private val MAPPER = Function<Cursor, RssItemModel> { cursor : Cursor ->
 		var i = -1
 		//
 		cursor.getString(++i)//id
@@ -100,13 +101,11 @@ object DbRssItem {
 		fun onDatos(lista: List<T>)
 	}
 
-	fun getLista(db: BriteDatabase, listener: Listener<RssItemModel>): Subscription
-	{
-		return db.createQuery(DbRssItem.TABLE, DbRssItem.QUERY)
+	fun getLista(db: BriteDatabase, listener: Listener<RssItemModel>) =
+		db.createQuery(DbRssItem.TABLE, DbRssItem.QUERY)
 			.mapToList(DbRssItem.MAPPER)
 			.observeOn(AndroidSchedulers.mainThread())
 			.subscribeOn(Schedulers.io())
-			.doOnError { err -> listener.onError(err) }
-			.subscribe { lista -> listener.onDatos(lista) }
-	}
+			.doOnError { err : Throwable -> listener.onError(err) }
+			.subscribe { lista : List<RssItemModel> -> listener.onDatos(lista) }
 }

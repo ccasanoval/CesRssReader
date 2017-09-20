@@ -4,13 +4,14 @@ import android.content.ContentValues
 import android.database.Cursor
 import android.util.Log
 
-import com.squareup.sqlbrite.BriteDatabase
+import com.squareup.sqlbrite2.BriteDatabase
 import java.util.UUID
 
-import rx.Subscription
-import rx.android.schedulers.AndroidSchedulers
-import rx.functions.Func1
-import rx.schedulers.Schedulers
+
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.functions.Function
+import io.reactivex.schedulers.Schedulers
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 object DbGlobal
@@ -29,7 +30,7 @@ object DbGlobal
 			"CREATE TABLE $TABLE ( " + DbGlobal.ID + " TEXT   NOT NULL   PRIMARY KEY," + DbGlobal.FEED_LINK + " TEXT" + " )"
 
 	//----------------------------------------------------------------------------------------------
-	private val MAPPER = Func1<Cursor, String>
+	private val MAPPER = Function<Cursor, String>
 	{ cursor ->
 		var link: String? = null
 		try
@@ -83,13 +84,11 @@ object DbGlobal
 		fun onDatos(lista: List<T>)
 	}
 
-	fun getDatos(db: BriteDatabase, listener: Listener<String>): Subscription
-	{
-		return db.createQuery(DbGlobal.TABLE, DbGlobal.QUERY)
+	fun getDatos(db: BriteDatabase, listener: Listener<String>) =
+		db.createQuery(DbGlobal.TABLE, DbGlobal.QUERY)
 			.mapToList(DbGlobal.MAPPER)
 			.observeOn(AndroidSchedulers.mainThread())
 			.subscribeOn(Schedulers.io())
 			.doOnError { err -> listener.onError(err) }
 			.subscribe { lista -> listener.onDatos(lista) }
-	}
 }

@@ -5,15 +5,15 @@ import android.database.Cursor
 import android.util.Log
 
 import com.cesoft.cesrssreader.model.RssSourceModel
-import com.squareup.sqlbrite.BriteDatabase
+import com.squareup.sqlbrite2.BriteDatabase
 
 import java.util.Date
 import java.util.UUID
 
-import rx.Subscription
-import rx.android.schedulers.AndroidSchedulers
-import rx.functions.Func1
-import rx.schedulers.Schedulers
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.functions.Function
+import io.reactivex.schedulers.Schedulers
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 object DbRssSource {
@@ -43,7 +43,7 @@ object DbRssSource {
 		" ON " + DbRssSource.TABLE + " (" + DbRssSource.ID + ")"
 
 	//----------------------------------------------------------------------------------------------
-	private val MAPPER = Func1<Cursor, RssSourceModel> { cursor ->
+	private val MAPPER = Function<Cursor, RssSourceModel> { cursor ->
 		var i = -1
 		//
 		val id = cursor.getString(++i)
@@ -127,12 +127,11 @@ object DbRssSource {
 			});
 	}*/
 
-	fun getLista(db: BriteDatabase, listener: Listener<RssSourceModel>): Subscription {
-		return db.createQuery(DbRssSource.TABLE, DbRssSource.QUERY)
+	fun getLista(db: BriteDatabase, listener: Listener<RssSourceModel>) =
+		db.createQuery(DbRssSource.TABLE, DbRssSource.QUERY)
 			.mapToList(DbRssSource.MAPPER)
 			.observeOn(AndroidSchedulers.mainThread())
 			.subscribeOn(Schedulers.io())
 			.doOnError { err -> listener.onError(err) }
 			.subscribe { lista -> listener.onDatos(lista) }
-	}
 }

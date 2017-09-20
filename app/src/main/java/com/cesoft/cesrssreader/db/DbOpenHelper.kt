@@ -5,10 +5,10 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 
 import com.cesoft.cesrssreader.App
-import com.squareup.sqlbrite.BriteDatabase
-import com.squareup.sqlbrite.SqlBrite
+import com.squareup.sqlbrite2.BriteDatabase
+import com.squareup.sqlbrite2.SqlBrite
+import io.reactivex.schedulers.Schedulers
 
-import rx.schedulers.Schedulers
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Created by Cesar Casanova on 12/06/2017.
