@@ -16,4 +16,5 @@
 
 	<string name="escoge_feed">Escoge un feed</string>
     <string name="sin_rss_feed">Sin feed RSS</string>
+    <string name="cancelar">Cancelar</string>
 </resources>

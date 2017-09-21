@@ -5,16 +5,12 @@ import android.net.Uri
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.MenuItem
-import android.webkit.WebView
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.TextView
-
 import com.bumptech.glide.Glide
 import com.cesoft.cesrssreader.R
 import com.cesoft.cesrssreader.Util
 import com.cesoft.cesrssreader.model.RssItemModel
 import com.cesoft.cesrssreader.model.RssItemParcelable
+import kotlinx.android.synthetic.main.act_detail.*
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Created by Cesar Casanova on 11/06/2017.
@@ -30,10 +26,11 @@ class ActDetail : AppCompatActivity()
 		supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 		supportActionBar!!.setDisplayShowHomeEnabled(true)
 
-		val txtTitulo = findViewById(R.id.txtTitulo) as TextView
-		val btnLink = findViewById(R.id.btnLink) as Button
-		val img = findViewById(R.id.img) as ImageView
-		val wvDescripcion = findViewById(R.id.wvDescripcion) as WebView
+		// NO NEEDED WITH: import kotlinx.android.synthetic.main.act_detail.*
+		//val txtTitulo = findViewById(R.id.txtTitulo) as TextView
+		//val btnLink = findViewById(R.id.btnLink) as Button
+		//val img = findViewById(R.id.img) as ImageView
+		//val wvDescripcion = findViewById(R.id.wvDescripcion) as WebView
 
 		try
 		{

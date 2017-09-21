@@ -14,4 +14,5 @@
     <string name="sin_rss_feed">No RSS feed</string>
     <string name="url_incorrecta">That URL is wrong</string>
     <string name="ver_en_el_navegador">Read it in the browser</string>
+    <string name="cancelar">Cancel</string>
 </resources>

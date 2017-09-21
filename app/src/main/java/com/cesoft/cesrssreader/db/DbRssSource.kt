@@ -2,7 +2,7 @@ package com.cesoft.cesrssreader.db
 
 import android.content.ContentValues
 import android.database.Cursor
-import android.util.Log
+import com.cesoft.cesrssreader.Util
 
 import com.cesoft.cesrssreader.model.RssSourceModel
 import com.squareup.sqlbrite2.BriteDatabase
@@ -70,10 +70,13 @@ object DbRssSource {
 	}
 
 	//______________________________________________________________________________________________
-	fun save(db: BriteDatabase?, rssSourceModel: RssSourceModel): Long {
-		try {
-			if(db == null) {
-				Log.e(TAG, "saveAll:e:------------------------------------------------------------------ DB == NULL")
+	fun save(db: BriteDatabase?, rssSourceModel: RssSourceModel): Long
+	{
+		try
+		{
+			if(db == null)
+			{
+				Util.log(TAG, "saveAll:e:------------------------------------------------------------------ DB == NULL")
 				return -1
 			}
 			//db.delete(DbRssSource.TABLE, null);//TODO: opcion de borrar...
@@ -82,8 +85,9 @@ object DbRssSource {
 
 			return db.insert(TABLE, code(rssSourceModel))
 		}
-		catch(e: Exception) {
-			Log.e(TAG, "saveAll:e:------------------------------------------------------------------", e)
+		catch(e: Exception)
+		{
+			Util.log(TAG, "saveAll:e:------------------------------------------------------------------", e)
 			return -1
 		}
 
@@ -96,7 +100,8 @@ object DbRssSource {
 
 
 	//----------------------------------------------------------------------------------------------
-	interface Listener<T> {
+	interface Listener<T>
+	{
 		fun onError(t: Throwable)
 		fun onDatos(lista: List<T>)
 	}
@@ -133,5 +138,5 @@ object DbRssSource {
 			.observeOn(AndroidSchedulers.mainThread())
 			.subscribeOn(Schedulers.io())
 			.doOnError { err -> listener.onError(err) }
-			.subscribe { lista -> listener.onDatos(lista) }
+			.subscribe { lista -> listener.onDatos(lista) } !!
 }

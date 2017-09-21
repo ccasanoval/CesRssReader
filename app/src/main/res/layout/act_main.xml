@@ -12,7 +12,13 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="?attr/colorPrimary" />
+            android:background="?attr/colorPrimary" >
+            <SearchView
+                android:id="@+id/searchView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right" />
+        </android.support.v7.widget.Toolbar>
     </android.support.design.widget.AppBarLayout>
 
     <TextView
@@ -38,7 +44,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginBottom="8dp" >
         <android.support.v7.widget.RecyclerView
-            android:id="@+id/rss_list"
+            android:id="@+id/rssList"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
     </android.support.v4.widget.SwipeRefreshLayout>

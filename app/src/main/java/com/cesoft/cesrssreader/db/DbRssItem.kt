@@ -5,7 +5,7 @@ import com.squareup.sqlbrite2.BriteDatabase
 
 import android.content.ContentValues
 import android.database.Cursor
-import android.util.Log
+import com.cesoft.cesrssreader.Util
 import io.reactivex.android.schedulers.AndroidSchedulers
 
 import java.util.Date
@@ -77,7 +77,7 @@ object DbRssItem
 		{
 			if(db == null)
 			{
-				Log.e(TAG, "saveAll:e:------------------------------------------------------------------ DB == NULL")
+				Util.log(TAG, "saveAll:e:------------------------------------------------------------------ DB == NULL")
 				return
 			}
 			db.delete(DbRssItem.TABLE, null)
@@ -88,11 +88,10 @@ object DbRssItem
 		}
 		catch(e: Exception)
 		{
-			Log.e(TAG, "saveAll:e:------------------------------------------------------------------", e)
+			Util.log(TAG, "saveAll:e:------------------------------------------------------------------", e)
 		}
 
 	}
-
 
 	//----------------------------------------------------------------------------------------------
 	interface Listener<T>

@@ -35,5 +35,11 @@
 # for DexGuard only
 #-keepresourcexmlelements manifest/application/meta-data@value=GlideModule
 
+
 # SEARCH
 -keep class android.support.v7.widget.SearchView { *; }
+
+###
+-keep class com.cesoft.cesrssreader.net.RssNet.RssHandler { *; }
+-keep public class org.jsoup.** { public *; }
+#

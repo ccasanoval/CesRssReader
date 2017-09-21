@@ -2,7 +2,7 @@ package com.cesoft.cesrssreader.db
 
 import android.content.ContentValues
 import android.database.Cursor
-import android.util.Log
+import com.cesoft.cesrssreader.Util
 
 import com.squareup.sqlbrite2.BriteDatabase
 import java.util.UUID
@@ -41,7 +41,7 @@ object DbGlobal
 		}
 		catch(e: Exception)
 		{
-			Log.e(TAG, "Func1:e:----------------------------------------------------------------", e)
+			Util.log(TAG, "Func1:e:----------------------------------------------------------------", e)
 		}
 
 		link
@@ -56,17 +56,21 @@ object DbGlobal
 	}
 
 	//______________________________________________________________________________________________
-	fun save(db: BriteDatabase?, link: String) {
-		try {
-			if(db == null) {
-				Log.e(TAG, "save:e:------------------------------------------------------------------ DB == NULL")
+	fun save(db: BriteDatabase?, link: String)
+	{
+		try
+		{
+			if(db == null)
+			{
+				Util.log(TAG, "save:e:------------------------------------------------------------------ DB == NULL")
 				return
 			}
 			db.delete(DbGlobal.TABLE, null)
 			db.insert(DbGlobal.TABLE, code(link))
 		}
-		catch(e: Exception) {
-			Log.e(TAG, "save:e:------------------------------------------------------------------", e)
+		catch(e: Exception)
+		{
+			Util.log(TAG, "save:e:------------------------------------------------------------------", e)
 		}
 
 	}

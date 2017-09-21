@@ -2,7 +2,6 @@ package com.cesoft.cesrssreader
 
 import android.content.Context
 import android.net.ConnectivityManager
-import android.util.Log
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -43,6 +42,6 @@ object Util
 	fun log(tag: String, msg: String, e: Throwable? = null)
 	{
 		if(BuildConfig.DEBUG)
-			Log.e(tag, msg, e)
+			android.util.Log.e(tag, msg, e)
 	}
 }

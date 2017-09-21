@@ -85,8 +85,6 @@ class RssNet
 		}
 	}
 
-
-
 	////////////////////////////////////////////////////////////////////////////////////////////////
 	class RssHandler : DefaultHandler()
 	{
@@ -98,7 +96,6 @@ class RssNet
 		private var parsingDescription: Boolean = false
 		private var parsingFecha: Boolean = false
 		private var fecha: String? = null
-
 
 		//------------------------------------------------------------------------------------------
 		internal fun getRssFeed(link: String): RssFeedModel
