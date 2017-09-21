@@ -176,21 +176,18 @@ class RssNet
 				//If parsingTitle is true, then that means we are inside a <title> tag so the text is the title of an item.
 				if(parsingTitle)
 				{
-					var s = ""
-					if(rssItem!!.titulo != null) s = rssItem!!.titulo
+					val s = rssItem!!.titulo
 					rssItem!!.titulo = s + String(ch, start, length)
-					Util.log(TAG, "TITULO: ------------- " + String(ch, start, length))
+					Util.log(TAG, "TITULO: ------------------- " + String(ch, start, length))
 				}
 				else if(parsingDescription)
 				{
-					var s = ""
-					if(rssItem!!.descripcion != null) s = rssItem!!.descripcion
+					val s = rssItem!!.descripcion
 					rssItem!!.descripcion = s + String(ch, start, length)
 				}
 				else if(parsingLink)
 				{
-					var s = ""
-					if(rssItem!!.link != null) s = rssItem!!.link
+					val s = rssItem!!.link
 					rssItem!!.link = s + String(ch, start, length)
 				}
 				else if(parsingFecha)

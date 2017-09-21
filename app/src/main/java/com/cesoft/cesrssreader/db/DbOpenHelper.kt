@@ -12,7 +12,8 @@ import io.reactivex.schedulers.Schedulers
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Created by Cesar Casanova on 12/06/2017.
-class DbOpenHelper private constructor(context: Context) : SQLiteOpenHelper(context, "cesrrs.db", null, VERSION)
+class DbOpenHelper private constructor(context: Context)
+	: SQLiteOpenHelper(context, "cesrrs.db", null, VERSION)
 {
 	override fun onCreate(db: SQLiteDatabase)
 	{

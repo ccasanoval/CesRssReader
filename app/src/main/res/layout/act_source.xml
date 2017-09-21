@@ -4,12 +4,25 @@
 	android:layout_width="match_parent"
 	android:layout_height="match_parent">
 
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/toolbar_layout"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:theme="@style/AppTheme.AppBarOverlay" >
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="?attr/colorPrimary" />
+    </android.support.design.widget.AppBarLayout>
+
 	<ListView
 		android:id="@+id/lstURL"
 		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:maxLines="5"
-		android:ellipsize="end"
+		android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fadeScrollbars="false"
+        android:ellipsize="end"
 		android:background="@android:color/holo_blue_light"
 		/>
 
@@ -22,24 +35,11 @@
 		android:hint="@string/introduce_url"
 		android:text=""/>
 
-    <LinearLayout
+    <Button
+        android:id="@+id/btnOK"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal" >
-        <Button
-            android:id="@+id/btnOK"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            style="?android:attr/buttonBarButtonStyle"
-            android:text="@string/leer"/>
-        <Button
-            android:id="@+id/btnCancel"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            style="?android:attr/buttonBarButtonStyle"
-            android:text="@string/cancelar"/>
-    </LinearLayout>
+        style="?android:attr/buttonBarButtonStyle"
+        android:text="@string/leer"/>
 
 </LinearLayout>

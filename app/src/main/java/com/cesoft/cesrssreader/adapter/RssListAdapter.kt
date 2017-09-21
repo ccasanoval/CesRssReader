@@ -8,7 +8,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.TextView
 
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -17,6 +16,7 @@ import com.cesoft.cesrssreader.R
 import com.cesoft.cesrssreader.model.RssItemModel
 import com.cesoft.cesrssreader.model.RssItemParcelable
 import com.cesoft.cesrssreader.view.ActDetail
+import kotlinx.android.synthetic.main.item_rss.view.*
 
 import org.jsoup.Jsoup
 
@@ -25,49 +25,36 @@ import org.jsoup.Jsoup
 class RssListAdapter(private val _context: Context, private val _RssItemModels: List<RssItemModel>)
 	: RecyclerView.Adapter<RssListAdapter.RssModelViewHolder>()
 {
-
-	////////////////////////////////////////////////////////////////////////////////////////////////
 	class RssModelViewHolder(val rssFeedView: View) : RecyclerView.ViewHolder(rssFeedView)
 
+	//----------------------------------------------------------------------------------------------
 	override fun onCreateViewHolder(parent: ViewGroup, type: Int): RssModelViewHolder
 	{
 		val v = LayoutInflater.from(parent.context).inflate(R.layout.item_rss, parent, false)
 		return RssModelViewHolder(v)
 	}
 
-	override fun onBindViewHolder(holder: RssModelViewHolder, position: Int) {
+	//----------------------------------------------------------------------------------------------
+	override fun onBindViewHolder(holder: RssModelViewHolder, position: Int)
+	{
 		val rssItemModel = _RssItemModels[position]
 
 		//-------------------
 		// Iniciamos campos del elemento Rss
-		(holder.rssFeedView.findViewById<View>(R.id.txtTitulo) as TextView).text = rssItemModel.titulo
-		(holder.rssFeedView.findViewById<View>(R.id.txtDescripcion) as TextView).text = Jsoup.parse(rssItemModel.descripcion).text()
-		//((WebView)holder.rssFeedView.findViewById(R.id.txtDescripcion)).loadData(rssItemModel.getDescripcion(), "text/html; charset=utf-8", "utf-8");
+		holder.rssFeedView.txtTitulo.text = rssItemModel.titulo
+		holder.rssFeedView.txtDescripcion.text = Jsoup.parse(rssItemModel.descripcion).text()
 		// Cargo imagen desde URL con Glide
-		if(rssItemModel.img != null) {
-			Glide
-				.with(_context)
-				.load(rssItemModel.img)
-				.apply(RequestOptions
-					.diskCacheStrategyOf(DiskCacheStrategy.ALL)
-					//.decode(RawDataDecoder.class)
-					.dontAnimate()
-					.dontTransform())
-				.into(holder.rssFeedView.findViewById<View>(R.id.img) as ImageView)
-		}
+		//if(rssItemModel.img != null)
+		Glide
+			.with(_context)
+			.load(rssItemModel.img)
+			.apply(RequestOptions
+				.diskCacheStrategyOf(DiskCacheStrategy.ALL)
+				//.decode(RawDataDecoder.class)
+				.dontAnimate()
+				.dontTransform())
+			.into(holder.rssFeedView.findViewById<View>(R.id.img) as ImageView)
 
-		//-------------------
-		// Boton que abre el navegador con la URL del Rss
-		/*holder.rssFeedView.findViewById(R.id.btnLink).setOnClickListener(
-			new View.OnClickListener()
-			{
-				@Override
-				public void onClick(View view)
-				{
-					Intent intent= new Intent(Intent.ACTION_VIEW, Uri.parse(rssItemModel.getLink()));
-					_context.startActivity(intent);
-				}
-			});*/
 		//-------------------
 		// Mostrar en Detalle
 		val onClick = View.OnClickListener {
@@ -75,9 +62,9 @@ class RssListAdapter(private val _context: Context, private val _RssItemModels: 
 			intent.putExtra(RssItemModel::class.java.simpleName, RssItemParcelable(rssItemModel))
 			_context.startActivity(intent)
 		}
-		holder.rssFeedView.findViewById<View>(R.id.img).setOnClickListener(onClick)
-		holder.rssFeedView.findViewById<View>(R.id.txtTitulo).setOnClickListener(onClick)
-		holder.rssFeedView.findViewById<View>(R.id.txtDescripcion).setOnClickListener(onClick)
+		holder.rssFeedView.img.setOnClickListener(onClick)
+		holder.rssFeedView.txtTitulo.setOnClickListener(onClick)
+		holder.rssFeedView.txtDescripcion.setOnClickListener(onClick)
 	}
 
 	//----------------------------------------------------------------------------------------------

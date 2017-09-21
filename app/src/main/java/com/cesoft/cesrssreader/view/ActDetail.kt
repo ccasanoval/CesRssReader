@@ -41,17 +41,18 @@ class ActDetail : AppCompatActivity()
 				finish()
 				return
 			}
-			txtTitulo.text = data.rssModel.titulo
+			txtTitulo.text = data.rssModel?.titulo
 			//txtDescripcion.setText(data.getRssModel().getDescripcion());
-			wvDescripcion.loadData(data.rssModel.descripcion, "text/html; charset=utf-8", "utf-8")
+			wvDescripcion.loadData(data.rssModel?.descripcion, "text/html; charset=utf-8", "utf-8")
 
-			if(data.rssModel.img != null) {
+			if(data.rssModel?.img != null)
+			{
 				Glide.with(this)
-					.load(data.rssModel.img)
+					.load(data.rssModel!!.img)
 					.into(img)
 			}
 			btnLink.setOnClickListener {
-				val intent = Intent(Intent.ACTION_VIEW, Uri.parse(data.rssModel.link))
+				val intent = Intent(Intent.ACTION_VIEW, Uri.parse(data.rssModel?.link))
 				this@ActDetail.startActivity(intent)
 			}
 

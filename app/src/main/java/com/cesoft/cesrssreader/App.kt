@@ -11,7 +11,6 @@ class App : Application()
 	//"https://www.nasa.gov/rss/dyn/breaking_news.rss"
 	//"https://actualidad.rt.com/feeds/all.rss"
 
-
 	override fun onCreate()
 	{
 		super.onCreate()

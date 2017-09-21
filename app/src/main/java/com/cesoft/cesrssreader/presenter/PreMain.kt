@@ -35,8 +35,7 @@ class PreMain
 	fun setFuente(url: String?)
 	{
 		Util.log(TAG, "setFuente----------------------------------------------------------------" + url!!)
-		if(url.isNotEmpty())
-		//TODO: check url?
+		if(url.isNotEmpty())//TODO: check url?
 		{
 			App.rssFeed = RssFeedModel(url)
 			getNetData()
@@ -82,7 +81,7 @@ class PreMain
 	//----------------------------------------------------------------------------------------------
 	private fun getNetData()
 	{
-		Util.log(TAG, "getNetData--------------------------------------------------")
+		Util.log(TAG, "getNetData--------------------------------------------------"+App.rssFeed.link)
 		//---
 		if(vista != null) vista!!.setRefreshing(true)
 		RssNet.fetch(App.rssFeed.link, object : RssNet.Callback
@@ -125,20 +124,11 @@ class PreMain
 
 	//----------------------------------------------------------------------------------------------
 	val data: List<RssItemModel>
-		get() = App.rssFeed.entradas
+		get() = App.rssFeed.entradas!!
 
 	//----------------------------------------------------------------------------------------------
 	fun getDataFiltered(query: String): List<RssItemModel>
-		= App.rssFeed.entradas.filter { it.titulo.toLowerCase().contains(query.toLowerCase()) }
-//	{
-//		val itemsFiltered = ArrayList<RssItemModel>()
-//		for(item in App.rssFeed.entradas)
-//		{
-//			if(item.titulo.toLowerCase().contains(query.toLowerCase()))
-//				itemsFiltered.add(item)
-//		}
-//		return itemsFiltered
-//	}
+		= App.rssFeed.entradas?.filter { it.titulo.toLowerCase().contains(query.toLowerCase()) } ?: arrayListOf()
 
 
 	///////////////// NET CALLBACK
@@ -149,19 +139,19 @@ class PreMain
 		{
 			vista!!.setRefreshing(false)
 			// Mostrar RSS Feed en vista
-			vista!!.showEntradas(feed.entradas)
-			vista!!.showTitulo(feed.fuente.titulo)
+			vista!!.showEntradas(feed.entradas!!)
+			vista!!.showTitulo(feed.fuente?.titulo ?: "")
 		}
 		//
 		//Guardar RSS Feed en BBDD
 		val db = DbOpenHelper.db
 		// Save Current Source
-		DbGlobal.save(db, App.rssFeed.link)
+		DbGlobal.save(db, App.rssFeed.link!!)
 		// Save Source
-		val id = DbRssSource.save(db, feed.fuente)
-		Util.log(TAG, "onData-------------------------------------------------" + id + " .... " + feed.fuente.id)
+		val id = DbRssSource.save(db, feed.fuente!!)
+		Util.log(TAG, "onData-------------------------------------------------" + id + " .... " + feed.fuente!!.id)
 		// Save Items
-		DbRssItem.saveAll(db, feed.entradas)//, feed.getFuente().getId());
+		DbRssItem.saveAll(db, feed.entradas!!)//, feed.getFuente().getId());
 		db.close()
 	}
 

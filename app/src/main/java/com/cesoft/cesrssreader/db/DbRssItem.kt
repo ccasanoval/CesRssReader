@@ -7,6 +7,7 @@ import android.content.ContentValues
 import android.database.Cursor
 import com.cesoft.cesrssreader.Util
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
 
 import java.util.Date
 import java.util.UUID
@@ -18,7 +19,8 @@ import io.reactivex.schedulers.Schedulers
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 object DbRssItem
 {
-	private val TAG = DbRssItem::class.java.simpleName
+	//private val TAG = DbRssItem::class.java.simpleName	//Ofuscado PROGUARD
+	private val TAG = "DbRssItem"							//No ofuscado PROGUARD
 
 	private val ID = "_id"
 	private val TITULO = "titulo"
@@ -34,12 +36,12 @@ object DbRssItem
 	//CREATE TABLE IF NOT EXISTS
 	internal val SQL_CREATE_TABLE =
 		"CREATE TABLE $TABLE ( "+
-			DbRssItem.ID + " TEXT   NOT NULL   PRIMARY KEY,"+
-			DbRssItem.TITULO + " TEXT,"+
-			DbRssItem.DESCRIPCION + " TEXT,"+
-			DbRssItem.LINK + " TEXT,"+
-			DbRssItem.IMG + " TEXT,"+
-			DbRssItem.FECHA + " INTEGER"+
+			ID + " TEXT   NOT NULL   PRIMARY KEY,"+
+			TITULO + " TEXT,"+
+			DESCRIPCION + " TEXT,"+
+			LINK + " TEXT,"+
+			IMG + " TEXT,"+
+			FECHA + " INTEGER"+
 		" )"
 	internal val SQL_CREATE_INDEX = "CREATE UNIQUE INDEX idx_id_$TABLE ON $TABLE ($ID)"
 
@@ -66,7 +68,7 @@ object DbRssItem
 		cv.put(DbRssItem.DESCRIPCION, o.descripcion)
 		cv.put(DbRssItem.LINK, o.link)
 		cv.put(DbRssItem.IMG, o.img)
-		cv.put(DbRssItem.FECHA, o.fecha.time)
+		cv.put(DbRssItem.FECHA, o.fecha?.time ?: 0)
 		return cv
 	}
 
@@ -94,13 +96,13 @@ object DbRssItem
 	}
 
 	//----------------------------------------------------------------------------------------------
-	interface Listener<T>
+	interface Listener<in T>
 	{
 		fun onError(t: Throwable)
 		fun onDatos(lista: List<T>)
 	}
 
-	fun getLista(db: BriteDatabase, listener: Listener<RssItemModel>) =
+	fun getLista(db: BriteDatabase, listener: Listener<RssItemModel>) : Disposable =
 		db.createQuery(DbRssItem.TABLE, DbRssItem.QUERY)
 			.mapToList(DbRssItem.MAPPER)
 			.observeOn(AndroidSchedulers.mainThread())

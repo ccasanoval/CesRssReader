@@ -9,6 +9,7 @@ import java.util.UUID
 
 
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
 import io.reactivex.functions.Function
 import io.reactivex.schedulers.Schedulers
 
@@ -23,32 +24,32 @@ object DbGlobal
 	private val FEED_LINK = "feedlink"
 
 	private val TABLE = "cesglobal"
-	private val QUERY = "SELECT * FROM " + TABLE
+	private val QUERY = "SELECT * FROM $TABLE "
 
 	//CREATE TABLE IF NOT EXISTS
-	internal val SQL_CREATE_TABLE =
-			"CREATE TABLE $TABLE ( " + DbGlobal.ID + " TEXT   NOT NULL   PRIMARY KEY," + DbGlobal.FEED_LINK + " TEXT" + " )"
+	internal val SQL_CREATE_TABLE = "CREATE TABLE $TABLE ( $ID TEXT   NOT NULL   PRIMARY KEY, $FEED_LINK TEXT )"
 
 	//----------------------------------------------------------------------------------------------
 	private val MAPPER = Function<Cursor, String>
-	{ cursor ->
-		var link: String? = null
-		try
-		{
-			var i = -1
-			cursor.getString(++i)
-			link = cursor.getString(++i)
-		}
-		catch(e: Exception)
-		{
-			Util.log(TAG, "Func1:e:----------------------------------------------------------------", e)
-		}
-
-		link
+	{
+		cursor ->
+			var link: String? = null
+			try
+			{
+				var i = -1
+				cursor.getString(++i)
+				link = cursor.getString(++i)
+			}
+			catch(e: Exception)
+			{
+				Util.log(TAG, "Function:e:----------------------------------------------------------", e)
+			}
+			link
 	}
 
 	//----------------------------------------------------------------------------------------------
-	private fun code(link: String): ContentValues {
+	private fun code(link: String): ContentValues
+	{
 		val cv = ContentValues()
 		cv.put(DbGlobal.ID, UUID.randomUUID().toString())
 		cv.put(DbGlobal.FEED_LINK, link)
@@ -62,7 +63,7 @@ object DbGlobal
 		{
 			if(db == null)
 			{
-				Util.log(TAG, "save:e:------------------------------------------------------------------ DB == NULL")
+				Util.log(TAG, "save:e:--------------------------------------------------- DB == NULL")
 				return
 			}
 			db.delete(DbGlobal.TABLE, null)
@@ -82,13 +83,13 @@ object DbGlobal
 
 
 	//----------------------------------------------------------------------------------------------
-	interface Listener<T>
+	interface Listener<in T>
 	{
 		fun onError(t: Throwable)
 		fun onDatos(lista: List<T>)
 	}
 
-	fun getDatos(db: BriteDatabase, listener: Listener<String>) =
+	fun getDatos(db: BriteDatabase, listener: Listener<String>) : Disposable =
 		db.createQuery(DbGlobal.TABLE, DbGlobal.QUERY)
 			.mapToList(DbGlobal.MAPPER)
 			.observeOn(AndroidSchedulers.mainThread())
