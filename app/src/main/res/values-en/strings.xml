@@ -15,4 +15,6 @@
     <string name="url_incorrecta">That URL is wrong</string>
     <string name="ver_en_el_navegador">Read it in the browser</string>
     <string name="cancelar">Cancel</string>
+    <string name="eliminar">Delete</string>
+    <string name="seguro_eliminar">Are your sure you want to delete it?</string>
 </resources>

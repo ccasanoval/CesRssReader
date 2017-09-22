@@ -42,18 +42,20 @@ class RssListAdapter(private val _context: Context, private val _RssItemModels: 
 		//-------------------
 		// Iniciamos campos del elemento Rss
 		holder.rssFeedView.txtTitulo.text = rssItemModel.titulo
-		holder.rssFeedView.txtDescripcion.text = Jsoup.parse(rssItemModel.descripcion).text()
+		holder.rssFeedView.txtDescripcion.text = Jsoup.parse(rssItemModel.descripcion ?: "").text()
 		// Cargo imagen desde URL con Glide
-		//if(rssItemModel.img != null)
-		Glide
-			.with(_context)
-			.load(rssItemModel.img)
-			.apply(RequestOptions
-				.diskCacheStrategyOf(DiskCacheStrategy.ALL)
-				//.decode(RawDataDecoder.class)
-				.dontAnimate()
-				.dontTransform())
-			.into(holder.rssFeedView.findViewById<View>(R.id.img) as ImageView)
+		if(rssItemModel.img != null)
+		{
+			Glide
+				.with(_context)
+				.load(rssItemModel.img)
+				.apply(RequestOptions
+					.diskCacheStrategyOf(DiskCacheStrategy.ALL)
+					//.decode(RawDataDecoder.class)
+					.dontAnimate()
+					.dontTransform())
+				.into(holder.rssFeedView.findViewById<View>(R.id.img) as ImageView)
+		}
 
 		//-------------------
 		// Mostrar en Detalle

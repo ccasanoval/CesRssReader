@@ -29,17 +29,17 @@ object DbRssSource
 	private val FECHA = "fecha"
 
 	private val TABLE = "rsssource"
-	private val QUERY =	"SELECT * FROM " + DbRssSource.TABLE
+	private val QUERY =	"SELECT * FROM $TABLE"
 
 	//CREATE TABLE IF NOT EXISTS
 	internal val SQL_CREATE_TABLE =
 		"CREATE TABLE $TABLE ( "+
-			DbRssSource.ID + " TEXT   NOT NULL   PRIMARY KEY,"+
-			DbRssSource.TITULO + " TEXT,"+
-			DbRssSource.DESCRIPCION + " TEXT,"+
-			DbRssSource.LINK + " TEXT,"+
-			DbRssSource.IMG + " TEXT,"+
-			DbRssSource.FECHA + " INTEGER"+
+			ID + " TEXT   NOT NULL   PRIMARY KEY,"+
+			TITULO + " TEXT,"+
+			DESCRIPCION + " TEXT,"+
+			LINK + " TEXT,"+
+			IMG + " TEXT,"+
+			FECHA + " INTEGER"+
 		" )"
 	internal val SQL_CREATE_INDEX = "CREATE UNIQUE INDEX idx_id_" + TABLE +
 		" ON " + DbRssSource.TABLE + " (" + DbRssSource.ID + ")"
@@ -93,9 +93,22 @@ object DbRssSource
 			Util.log(TAG, "save:e:------------------------------------------------------------------", e)
 			return -1
 		}
-
 	}
 
+	//______________________________________________________________________________________________
+	fun delete(db: BriteDatabase, rssSourceModel: RssSourceModel)
+	{
+		try
+		{
+			//if(db == null)	Util.log(TAG, "save:e:------------------------------------------------------------------ DB == NULL")
+			//else
+				db.delete(TABLE, " link like ?", rssSourceModel.link)
+		}
+		catch(e: Exception)
+		{
+			Util.log(TAG, "save:e:------------------------------------------------------------------", e)
+		}
+	}
 
 	//----------------------------------------------------------------------------------------------
 	interface Listener<in T>

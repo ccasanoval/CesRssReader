@@ -4,11 +4,13 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.LinearLayoutManager
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.*
 import com.cesoft.cesrssreader.R
 import com.cesoft.cesrssreader.Util
+import com.cesoft.cesrssreader.adapter.SourceListAdapter
 import com.cesoft.cesrssreader.db.DbOpenHelper
 import com.cesoft.cesrssreader.db.DbRssSource
 import com.cesoft.cesrssreader.model.RssSourceModel
@@ -17,7 +19,7 @@ import kotlinx.android.synthetic.main.act_source.*
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Created by Cesar Casanova on 12/06/2017.
-//TODO: MVP + Borrar sources!
+//TODO: MVP
 class ActSource : AppCompatActivity()
 {
 	private var _lista: List<RssSourceModel> = listOf()
@@ -30,7 +32,7 @@ class ActSource : AppCompatActivity()
 		setSupportActionBar(toolbar)
 
 		btnOK.setOnClickListener {
-			if(txtURL.text.isEmpty())//TODO: Validar Rss Feed
+			if(txtURL.text.length < 5)//if(txtURL.text.isEmpty())//TODO: Validar Rss Feed
 			{
 				Toast.makeText(this@ActSource, R.string.url_incorrecta, Toast.LENGTH_LONG).show()
 			}
@@ -42,38 +44,35 @@ class ActSource : AppCompatActivity()
 				finish()
 			}
 		}
-		//btnCancel.setOnClickListener { finish() }
 
-		//val lv = findViewById(R.id.lstURL) as ListView
-		lstURL.onItemClickListener = AdapterView.OnItemClickListener { _, _, i, _ -> txtURL.setText(_lista[i].link) }
-		iniListaFeeds(lstURL)
+		iniListaFeeds()
 	}
 
 	//----------------------------------------------------------------------------------------------
-	private fun iniListaFeeds(lv: ListView)
+	private fun iniListaFeeds()
 	{
-		val db = DbOpenHelper.db
+		lstURL.layoutManager = LinearLayoutManager(this)
 
+		val db = DbOpenHelper.db
 		DbRssSource.getLista(db, object : DbRssSource.Listener<RssSourceModel>
 		{
 			override fun onError(t: Throwable)
 			{
-				Util.log(TAG, "getDbData:DbRssSource:e:------------------------------------------------", t)
+				Util.log(TAG, "getDbData:DbRssSource:e:--------------------------------------------", t)
 			}
-
 			override fun onDatos(lista: List<RssSourceModel>)
 			{
 				_lista = lista
-				val a = arrayOfNulls<String>(lista.size)
-				val maxLength = 25
-				for((i, feed) in lista.withIndex())
-				{
-					var titulo = feed.titulo
-					if(titulo!=null && titulo.length > maxLength) titulo = titulo.substring(0, maxLength) + "..."
-					a[i] = titulo
+				val adapter = SourceListAdapter(this@ActSource, _lista)
+				adapter.setOnItemDelete {
+					rssSourceModel: RssSourceModel ->
+						DbRssSource.delete(DbOpenHelper.db, rssSourceModel)
+						iniListaFeeds()
 				}
-				val adapter = ArrayAdapter<String>(lv.context, android.R.layout.simple_list_item_1, android.R.id.text1, a)
-				lv.adapter = adapter
+				adapter.setOnItemSelected {
+					link : String? -> txtURL.setText(link)
+				}
+				lstURL.adapter = adapter
 			}
 		})
 	}
